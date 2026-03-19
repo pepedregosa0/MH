@@ -1,24 +1,13 @@
 #pragma once
 #include <problem.h>
-#include <math.h>
 #include <vector>
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <sstream>
 
 namespace Par {
 
-double Distancia(const std::vector<float> &instancia1, const std::vector<float> &instancia2)
-{
-	double distancia = 0;
-	for (int i = 0; i < instancia1.size(); i++)
-		distancia += pow(instancia1[i] - instancia2[i], 2);
-	distancia = sqrt(distancia);
-
-	return distancia;
-}
-
+/////////////////////////////////////////////////////////
+/// Calculo de la distancia euclidea entre dos instancias
+/////////////////////////////////////////////////////////
+double Distancia(const std::vector<float> &instancia1, const std::vector<float> &instancia2);
 
 struct Restriccion
 {
@@ -41,149 +30,46 @@ private:
 	//////////////////////////////
 	/// Leer archivo de instancias
 	//////////////////////////////
-	int CargarInstancias(std::string ruta_instancias)
-	{
-		std::ifstream a_instancias(ruta_instancias);
-
-		if (!a_instancias.is_open())
-		{
-			std::cerr << "Error al abrir archivo " << ruta_instancias << std::endl;
-			return 1;
-		}
-
-		std::string linea;
-		while (std::getline(a_instancias, linea))
-		{
-			std::stringstream ss(linea);
-			std::string valor;
-			std::vector<float> fila;
-
-			while (std::getline(ss, valor, ','))
-				fila.push_back(stof(valor));
-			
-			this->instancias.push_back(fila);
-		}
-
-		a_instancias.close();
-		this->num_instancias = this->instancias.size();
-		return 0;
-	}
+	int CargarInstancias(std::string ruta_instancias);
 
 	//////////////////////////////
 	/// Leer archivo restricciones
 	//////////////////////////////
-	int CargarRestricciones(std::string ruta_restricciones)
-	{
-		std::ifstream a_restricciones(ruta_restricciones);
-	
-		if (!a_restricciones.is_open())
-		{
-			std::cerr << "Error al abrir archivo " << ruta_restricciones << std::endl;
-			return 1;
-		}
+	int CargarRestricciones(std::string ruta_restricciones);
 
-		// Reservar memoria para la matriz de restricciones
-		this->m_restricciones = std::vector<std::vector<short>>(num_instancias, std::vector<short>(num_instancias, 0));
-
-		std::string linea;
-		size_t i = 0, j = 0;
-		while (std::getline(a_restricciones, linea))
-		{
-			j = 0;
-			std::stringstream ss(linea);
-			std::string valor;
-			Restriccion actual;
-
-			while (std::getline(ss, valor, ','))
-			{
-				int tipo_restriccion = stoi(valor);
-				this->m_restricciones[i][j] = tipo_restriccion;
-				if (i < j && tipo_restriccion != 0)
-				{
-					Restriccion actual;
-					actual.tipo = tipo_restriccion;
-					actual.i = i;
-					actual.j = j;
-					this->l_restricciones.emplace_back(actual);
-				}
-				j++;
-			}
-			i++;
-		}
-		a_restricciones.close();
-
-		return 0;
-	}
-
-	void CalcularLambda()
-	{
-		double max_distancia = 0;
-
-		for (size_t i = 0; i < instancias.size() - 1; i++)
-		{
-			for (size_t j = i+1; j < instancias.size(); j++)
-			{
-				double distancia = Distancia(instancias[i], instancias[j]);
-				if (distancia > max_distancia)
-					max_distancia = distancia;
-			}
-		}
-		if (l_restricciones.size() > 0)
-			this->lambda = max_distancia / l_restricciones.size();
-		else
-			this->lambda = 0.0;
-	}
-
+	////////////////////////////////////////////////////
+	/// Funciones auxiliares para el calculo del fitness
+	////////////////////////////////////////////////////
+	void CalcularLambda();
+	double CalcularDesviacion(const tSolution<int> &solucion);
+	int CalcularInfeasibility(const tSolution<int> &solucion);
 
 public:
-	ProblemPar(size_t num_clusters, std::string ruta_instancias, std::string ruta_restricciones) : Problem<int>() 
-	{
-		this->num_clusters = num_clusters;
-		int err1 = CargarInstancias(ruta_instancias);
-		int err2 = CargarRestricciones(ruta_restricciones);
-		if (err1 || err2)
-		{
-			std::cerr << "Error al cargar los datos" << std::endl;
-			return;
-		}
-		CalcularLambda();
-	}
-
+	ProblemPar(size_t num_clusters, std::string ruta_instancias, std::string ruta_restricciones);
+	
 	virtual size_t getSolutionSize() override { return num_clusters; }
+
 	virtual std::pair<int, int> getSolutionDomainRange() override 
 	{
-	return std::make_pair(false, true);
+		return std::make_pair(false, true);
 	}
-
-	tFitness fitness(const tSolution<int> &solution) override 
+	
+	tFitness fitness(const tSolution<int> &solucion) override
 	{
-	tFitness count = 0;
-
-	for (int i = 0; i < solution.size(); i++) 
-	{
-		if (solution[i]) 
-		{
-		if (i % 2 == 0) 
-		{
-			count += 1;
-		} 
-		else 
-		{
-			count -= 1;
-		}
-		}
-	}
-	return count;
+		double desviacion = CalcularDesviacion(solucion);
+		int infeasibility = CalcularInfeasibility(solucion);
+	
+		return (desviacion + this->lambda * infeasibility);
 	}
 
 	tSolution<int> createSolution() override 
 	{
-	tSolution<int> solution(num_clusters);
-	for (int i = 0; i < solution.size(); i++) 
-	{
-		solution[i] = Random::get<bool>();
-	}
-	return solution;
+		tSolution<int> solution(num_clusters);
+		for (int i = 0; i < solution.size(); i++) 
+		{
+			solution[i] = Random::get<bool>();
+		}
+		return solution;
 	}
 
 	virtual bool isValid(const tSolution<int> &solution) override { return true; }
