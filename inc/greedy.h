@@ -15,7 +15,8 @@ using MHInt = MH<int>;
 using ProblemInt = Problem<int>;
 using ResultMHInt = ResultMH<int>;
 
-class GreedySearch : public MHInt {
+class GreedySearch : public MHInt 
+{
 
 public:
   GreedySearch() : MH() {}

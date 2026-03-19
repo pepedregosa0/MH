@@ -6,6 +6,8 @@
 // Real problem class
 #include "pincrem.h"
 
+#include "ppar.h"
+
 // All all algorithms
 #include "greedy.h"
 #include "randomsearch.h"

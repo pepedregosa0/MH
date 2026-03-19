@@ -15,7 +15,8 @@ using Random = effolkronium::random_static;
  * The idea is to inherit from this class for specific problems.
  */
 template<typename tDomain>
-class SolutionFactoringInfo {
+class SolutionFactoringInfo 
+{
     virtual ~SolutionFactoringInfo() = default; // Default destructor
 };
 
@@ -26,7 +27,8 @@ class SolutionFactoringInfo {
  * @version 1.0
  */
 template<typename tDomain>
-class Problem {
+class Problem 
+{
 public:
   Problem() {}
   virtual ~Problem() {}
@@ -50,7 +52,8 @@ public:
    */
   virtual tFitness fitness(const tSolution<tDomain> &solution,
                            SolutionFactoringInfo<tDomain> *solution_info,
-                           unsigned pos_change, tDomain new_value) {
+                           unsigned pos_change, tDomain new_value) 
+  {
     auto newsol(solution);
     newsol[pos_change] = new_value;
     return fitness(newsol);
@@ -63,7 +66,8 @@ public:
    * @return the solution information.
    */
   virtual SolutionFactoringInfo<tDomain> *
-  generateFactoringInfo(const tSolution<tDomain> &solution) {
+  generateFactoringInfo(const tSolution<tDomain> &solution) 
+  {
     return new SolutionFactoringInfo<tDomain>();
   }
 

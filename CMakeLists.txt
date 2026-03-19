@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.0)
+cmake_minimum_required(VERSION 3.28)
 
 PROJECT(mh_p1 CXX)
 
@@ -6,6 +6,10 @@ file(GLOB C_SOURCES "src/*.cpp")
 include_directories("common" "inc")
 
 add_executable(main "main.cpp" ${C_SOURCES})
+
+
+# Enable optimization flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 # include(FetchContent)
 # FetchContent_Declare(

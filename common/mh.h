@@ -4,7 +4,8 @@
 #include <utility>
 
 template <typename tDomain>
-struct ResultMH {
+struct ResultMH 
+{
   tSolution<tDomain> solution;
   tFitness fitness;
   unsigned int evaluations;
@@ -22,7 +23,8 @@ struct ResultMH {
  */
 
 template <typename tDomain>
-class MH {
+class MH 
+{
 public:
   virtual ~MH() {}
   /**
