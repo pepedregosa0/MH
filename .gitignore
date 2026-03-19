@@ -35,3 +35,5 @@ main
 CMakeCache.txt
 CMakeFiles/
 Makefile
+bin/
+build/

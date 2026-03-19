@@ -1,3 +1,0 @@
-/home/josepc/Escritorio/MH/practicas/template_mh/CMakeFiles/main.dir
-/home/josepc/Escritorio/MH/practicas/template_mh/CMakeFiles/edit_cache.dir
-/home/josepc/Escritorio/MH/practicas/template_mh/CMakeFiles/rebuild_cache.dir
