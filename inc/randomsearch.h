@@ -25,12 +25,7 @@ public:
    * @param maxevals Maximum number of evaluations allowed
    * @return A pair containing the best solution found and its fitness
    */
-<<<<<<< HEAD
   ResultMH<tDomain> optimize(Problem<tDomain> &problem, int maxevals) override {
-=======
-  ResultMH<int> optimize(Problem<int> &problem, int maxevals) override 
-  {
->>>>>>> ae032d5 (Constructor + parsing + Distancia entre instancias + Calculo de Lambda)
     assert(maxevals > 0);
     tSolution<tDomain> best;
     tFitness best_fitness = -1;
