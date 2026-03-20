@@ -7,15 +7,7 @@ namespace Par {
 /////////////////////////////////////////////////////////
 /// Calculo de la distancia euclidea entre dos instancias
 /////////////////////////////////////////////////////////
-double Distancia(const std::vector<float> &instancia1, const std::vector<float> &instancia2)
-{
-	double distancia = 0;
-	for (int i = 0; i < instancia1.size(); i++)
-		distancia += pow(instancia1[i] - instancia2[i], 2);
-	distancia = sqrt(distancia);
-
-	return distancia;
-}
+double Distancia(const std::vector<float> &instancia1, const std::vector<float> &instancia2);
 
 struct Restriccion
 {
