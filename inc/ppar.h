@@ -47,6 +47,8 @@ private:
 public:
 	ProblemPar(size_t num_clusters, std::string ruta_instancias, std::string ruta_restricciones);
 	
+	void printInfo();
+
 	virtual size_t getSolutionSize() override { return num_clusters; }
 
 	virtual std::pair<int, int> getSolutionDomainRange() override 
@@ -64,12 +66,16 @@ public:
 
 	tSolution<int> createSolution() override 
 	{
-		tSolution<int> solution(num_clusters);
-		for (int i = 0; i < solution.size(); i++) 
+		tSolution<int> solucion(this->num_instancias);
+		std::vector<int> contador_clusters(this->num_clusters, 0);
+
+		for (size_t i = 0; i < this->num_instancias; i++)
 		{
-			solution[i] = Random::get<bool>();
+			int cluster_rand = Random::get<int>(0, this->num_clusters - 1);
+			solucion[i] = cluster_rand;
+			contador_clusters[cluster_rand]++;
 		}
-		return solution;
+		return solucion;
 	}
 
 	virtual bool isValid(const tSolution<int> &solution) override { return true; }

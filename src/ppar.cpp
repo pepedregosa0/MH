@@ -123,7 +123,20 @@ double ProblemPar::CalcularDesviacion(const tSolution<int> &solucion)
 
 int ProblemPar::CalcularInfeasibility(const tSolution<int> &solucion)
 {
-	return 0;
+	int infeasibility = 0;
+
+	for (size_t k = 0; k < l_restricciones.size(); k++)
+	{
+		unsigned i = l_restricciones[k].i;
+		unsigned j = l_restricciones[k].j;
+		int tipo = l_restricciones[k].tipo;
+
+		if (tipo == 1 && solucion[i] != solucion[j])
+			infeasibility++;
+		else if (tipo == -1 && solucion[i] == solucion[j])
+			infeasibility++;
+	}
+	return infeasibility;
 }
 
 ////////////////////
@@ -141,4 +154,24 @@ ProblemPar::ProblemPar(size_t num_clusters, std::string ruta_instancias, std::st
 		return;
 	}
 	CalcularLambda();
+}
+
+void ProblemPar::printInfo()
+{
+	std::cout << "--- INFO DEL PROBLEMA PAR ---" << std::endl;
+    std::cout << "Numero de instancias (n): " << num_instancias << std::endl;
+    std::cout << "Numero de clusters (k): " << num_clusters << std::endl;
+    std::cout << "Total de restricciones en lista |R|: " << l_restricciones.size() << std::endl;
+    std::cout << "Valor de Lambda calculado: " << lambda << std::endl;
+
+    if (num_instancias > 0) {
+        for (std::vector<float> row : instancias) 
+		{
+			for (float value : row)
+            	std::cout << value << " ";
+			std::cout << std::endl;
+        }
+        std::cout << std::endl;
+    }
+    std::cout << "-----------------------------" << std::endl;
 }
