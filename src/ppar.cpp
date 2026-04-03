@@ -238,16 +238,6 @@ void ProblemPar::printInfo()
     std::cout << "Numero de clusters (k): " << num_clusters << std::endl;
     std::cout << "Total de restricciones en lista |R|: " << l_restricciones.size() << std::endl;
     std::cout << "Valor de Lambda calculado: " << lambda << std::endl;
-
-    if (num_instancias > 0) {
-        for (std::vector<double> row : instancias) 
-		{
-			for (double value : row)
-            	std::cout << value << " ";
-			std::cout << std::endl;
-        }
-        std::cout << std::endl;
-    }
     std::cout << "-----------------------------" << std::endl;
 }
 
