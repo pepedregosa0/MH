@@ -17,7 +17,6 @@ using ResultMHInt = ResultMH<int>;
 
 class GreedySearch : public MHInt 
 {
-
 public:
   GreedySearch() : MH() {}
   virtual ~GreedySearch() {}

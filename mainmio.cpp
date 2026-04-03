@@ -9,49 +9,44 @@
 #include "ppar.h"
 
 // All all algorithms
-// #include "greedy.h"
-// #include "randomsearch.h"
+#include "greedy.h"
+#include "randomsearch.h"
+#include "random.hpp"
 
 using namespace std;
 int main(int argc, char *argv[]) 
 {
-  // Inicializar semilla
-  Random::seed(42);
+	long int seed = 42; // Semilla por defecto
 
-  Par::ProblemPar problema(7, "../datos_PAR_curso2526/zoo_set.dat", "../datos_PAR_curso2526/zoo_set_const_15.dat");
+	RandomSearch<int> ralg = RandomSearch<int>();
+	// GreedySearch rgreedy = GreedySearch();
 
-  cout << "Generando solucion parcial" << endl;
+	vector<pair<string, MH<int> *>> algoritmos = {
+		make_pair("RandomSearch", &ralg),
+	// 	make_pair("Greedy", &rgreedy)
+	};
 
-  tSolution<int> sol= problema.createSolution();
+	// Cargar datos
+	Par::ProblemPar problema(7, "../datos_PAR_curso2526/zoo_set.dat", "../datos_PAR_curso2526/zoo_set_const_30.dat");
+	Problem<int> *problem = dynamic_cast<Problem<int> *>(&problema);
 
-  cout << "Solucion generada. Calculando fitness" << endl;
+	for (int i = 0; i < algoritmos.size(); i++) 
+	{
+		Random::seed(seed); // Reiniciar semilla para cada algoritmo para que sea justa la comparación [7]
+		cout << "Ejecutando " << algoritmos[i].first << "..." << endl;
+		
+		auto mh = algoritmos[i].second;
+		
+		// Solo es para el random
+		int num_evaluaciones = 100000;
+		
+		ResultMH<int> result = mh->optimize(*problem, num_evaluaciones);
+		
+		cout << "Best solution: " << result.solution << endl;
+		cout << "Best fitness: " << result.fitness << endl;
+		cout << "Evaluations: " << result.evaluations << endl;
+	}
 
-  tFitness fit = problema.fitness(sol);
 
-  cout << "El fitness de la solucion aleatoria es: " << fit << endl;
-
-  problema.printInfo();
-
-  // Create the algorithms
-  // RandomSearch<int> ralg = RandomSearch<int>();
-  // GreedySearch rgreedy = GreedySearch();
-  // Create the specific problem
-  // ProblemIncrem rproblem = ProblemIncrem(10);
-  // Solve using evaluations
-  //vector<pair<string, MH<int> *> > algoritmos = {make_pair("RandomSearch", &ralg),
-  //                                         make_pair("Greedy", &rgreedy)};
-  // Problem<int> *problem = dynamic_cast<Problem<int> *>(&rproblem);
-
-  //for (int i = 0; i < algoritmos.size(); i++) 
-  //{
-  //  Random::seed(seed);
-  //  cout << algoritmos[i].first << endl;
-  //  auto mh = algoritmos[i].second;
-  //  ResultMH result = mh->optimize(*problem, 1000);
-  //  cout << "Best solution: " << result.solution << endl;
-  //  cout << "Best fitness: " << result.fitness << endl;
-  //  cout << "Evaluations: " << result.evaluations << endl;
-  //}
-
-  return 0;
+	return 0;
 }

@@ -56,26 +56,4 @@ ResultMHInt GreedySearch::optimize(ProblemInt &problem, int maxevals) {
   return ResultMH(sol, fitness, 1);
 }
 
-int ProblemPar::IncrementoInfeasibility(int instancia_i, int cluster_c, const tSolution<int> &solucion_actual)
-{
-    int penalizacion = 0;
-    
-    // Recorremos la fila de la instancia_i en la matriz para ver sus relaciones con cada instancia j
-    for (size_t j = 0; j < num_instancias; j++)
-    {
-        int tipo_restriccion = m_restricciones[instancia_i][j];
-        
-        if (tipo_restriccion != 0 && instancia_i != j) 
-        {
-            int cluster_j = solucion_actual[j];
-            
-            // Si es Must-Link (1) y las estamos poniendo en clusters distintos
-            if (tipo_restriccion == 1 && cluster_c != cluster_j)
-                penalizacion++;
-            // Si es Cannot-Link (-1) y las estamos poniendo en el mismo cluster
-            else if (tipo_restriccion == -1 && cluster_c == cluster_j)
-                penalizacion++;
-        }
-    }
-    return penalizacion;
-}
+

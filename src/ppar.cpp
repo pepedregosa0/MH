@@ -189,6 +189,30 @@ double ProblemPar::CalcularDistanciaIntraCluster(int cluster, const std::vector<
     return 0.0;
 }
 
+int ProblemPar::IncrementoInfeasibility(int instancia_i, int cluster_c, const tSolution<int> &solucion_actual)
+{
+    int penalizacion = 0;
+    
+    // Recorremos la fila de la instancia_i en la matriz para ver sus relaciones con cada instancia j
+    for (size_t j = 0; j < num_instancias; j++)
+    {
+        int tipo_restriccion = m_restricciones[instancia_i][j];
+        
+        if (tipo_restriccion != 0 && instancia_i != j) 
+        {
+            int cluster_j = solucion_actual[j];
+            
+            // Si es Must-Link (1) y las estamos poniendo en clusters distintos
+            if (tipo_restriccion == 1 && cluster_c != cluster_j)
+                penalizacion++;
+            // Si es Cannot-Link (-1) y las estamos poniendo en el mismo cluster
+            else if (tipo_restriccion == -1 && cluster_c == cluster_j)
+                penalizacion++;
+        }
+    }
+    return penalizacion;
+}
+
 
 ////////////////////
 /// PUBLIC FUNCTIONS
@@ -227,16 +251,43 @@ void ProblemPar::printInfo()
     std::cout << "-----------------------------" << std::endl;
 }
 
-tSolution<int> ProblemPar::createSolution() override 
+tSolution<int> ProblemPar::createSolution()
 {
 	tSolution<int> solucion(this->num_instancias);
-	std::vector<int> contador_clusters(this->num_clusters, 0);
+    std::vector<int> tam_cluster(this->num_clusters, 0);
 
-	for (size_t i = 0; i < this->num_instancias; i++)
-	{
-		int cluster_rand = Random::get<int>(0, this->num_clusters - 1);
-		solucion[i] = cluster_rand;
-		contador_clusters[cluster_rand]++;
-	}
-	return solucion;
+	// Generar una solución aleatoria
+	for (size_t i = 0; i < this->num_instancias; i++) 
+    {
+        int c = Random::get<int>(0, this->num_clusters - 1);
+        solucion[i] = c;
+        tam_cluster[c]++;
+    }
+
+	// Reparar clusters si algunos quedó sin instancias
+	for (size_t c = 0; c < this->num_clusters; c++) 
+    {
+        if (tam_cluster[c] == 0) 
+        {
+            // Buscar un clúster que tenga más de 1 instancia para robarle una
+            int cluster_donador = -1;
+            do 
+			{
+                cluster_donador = Random::get<int>(0, this->num_clusters - 1);
+            } while (tam_cluster[cluster_donador] <= 1);
+
+            // Robar su primera instancia y asignarla al clúster vacío 'c'
+            for (size_t i = 0; i < this->num_instancias; i++) 
+            {
+                if (solucion[i] == cluster_donador) 
+                {
+                    solucion[i] = c;
+                    tam_cluster[cluster_donador]--;
+                    tam_cluster[c]++;
+                    break;
+                }
+            }
+        }
+    }
+    return solucion;
 }

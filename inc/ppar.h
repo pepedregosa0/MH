@@ -50,6 +50,9 @@ private:
 	std::vector<std::vector<double>> CalcularCentroides(const tSolution<int> &solucion);
     double CalcularDistanciaIntraCluster(int cluster, const std::vector<double> &centroide, const tSolution<int> &solucion);
 
+
+	int IncrementoInfeasibility(int instancia_i, int cluster_c, 
+								const tSolution<int> &solucion_actual);
 public:
 	ProblemPar(size_t num_clusters, std::string ruta_instancias, std::string ruta_restricciones);
 	
@@ -70,8 +73,7 @@ public:
 		return (desviacion + this->lambda * infeasibility);
 	}
 
-	tSolution<int> createSolution();
-
+	tSolution<int> createSolution() override;
 	virtual bool isValid(const tSolution<int> &solution) override { return true; }
 
 	virtual void fix(tSolution<int> &solution) override {}
