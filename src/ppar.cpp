@@ -174,7 +174,7 @@ double ProblemPar::CalcularDistanciaIntraCluster(int cluster, const std::vector<
     double dist_total = 0.0;
     int tamano = 0;
 
-    // Sumar las distancias de las instancias que pertenecen a este clúster
+    // Sumar las distancias de las instancias que pertenecen a este cluster
     for (size_t i = 0; i < num_instancias; i++) 
     {
         if (solucion[i] == cluster) 
@@ -252,40 +252,65 @@ tFitness ProblemPar::fitness(const tSolution<int> &solucion)
 tSolution<int> ProblemPar::createSolution()
 {
 	tSolution<int> solucion(this->num_instancias);
-    std::vector<int> tam_cluster(this->num_clusters, 0);
 
-	// Generar una solución aleatoria
-	for (size_t i = 0; i < this->num_instancias; i++) 
+	for (size_t i = 0; i < this->num_instancias; i++)
+		solucion[i] = Random::get<int>(0, this->num_clusters - 1);
+
+	if (!isValid(solucion))
+		fix(solucion);
+
+	return solucion;
+}
+
+bool ProblemPar::isValid(const tSolution<int> &solution) 
+{ 
+    // Creamos un vector de contadores inicializado a 0 para cada cluster
+    std::vector<int> tamano_cluster(this->num_clusters, 0);
+
+    // Contamos cuantas instancias tiene cada cluster en esta solucion
+    for (size_t i = 0; i < this->num_instancias; i++)
+        tamano_cluster[solution[i]]++;
+
+    // Comprobamos si algun cluster se ha quedado vacio
+    for (size_t c = 0; c < this->num_clusters; c++) 
     {
-        int c = Random::get<int>(0, this->num_clusters - 1);
-        solucion[i] = c;
-        tam_cluster[c]++;
+        if (tamano_cluster[c] == 0) 
+            return false;
     }
 
-	// Reparar clusters si algunos quedó sin instancias
-	for (size_t c = 0; c < this->num_clusters; c++) 
-    {
-        if (tam_cluster[c] == 0) 
-        {
-            // Buscar un clúster que tenga más de 1 instancia para robarle una
-            int cluster_donador = -1;
-            do 
-			{
-                cluster_donador = Random::get<int>(0, this->num_clusters - 1);
-            } while (tam_cluster[cluster_donador] <= 1);
+    return true; // Todos los clusteres tienen al menos 1 instancia
+}
 
-            // Robar su primera instancia y asignarla al clúster vacío 'c'
+void ProblemPar::fix(tSolution<int> &solution) 
+{
+    std::vector<int> tamano_cluster(this->num_clusters, 0);
+
+    // Contar cuantas instancias tiene cada cluster actualmente
+    for (size_t i = 0; i < this->num_instancias; i++) 
+        tamano_cluster[solution[i]]++;
+
+    // Comprobar si algun grupo se ha quedado vacio
+    for (size_t c = 0; c < this->num_clusters; c++) 
+    {
+        if (tamano_cluster[c] == 0) 
+        {
+            // Buscar un cluster tenga mas de 1 instancia
+            int cluster_donante = -1;
+            do {
+                cluster_donante = Random::get<int>(0, this->num_clusters - 1);
+            } while (tamano_cluster[cluster_donante] <= 1);
+
+            // Robar su primera instancia y asignarla al cluster vacio 'c'
             for (size_t i = 0; i < this->num_instancias; i++) 
             {
-                if (solucion[i] == cluster_donador) 
+                if (solution[i] == cluster_donante) 
                 {
-                    solucion[i] = c;
-                    tam_cluster[cluster_donador]--;
-                    tam_cluster[c]++;
-                    break;
+                    solution[i] = c;
+                    tamano_cluster[cluster_donante]--;
+                    tamano_cluster[c]++;
+                    break; // siguiente cluster vacio
                 }
             }
         }
     }
-    return solucion;
 }

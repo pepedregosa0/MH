@@ -12,19 +12,23 @@
 #include "greedy.h"
 #include "randomsearch.h"
 #include "random.hpp"
+#include "localsearch.h"
 
 using namespace std;
 int main(int argc, char *argv[]) 
 {
 	long int seed = 42; // Semilla por defecto
 
-	RandomSearch<int> ralg = RandomSearch<int>();
-	// GreedySearch rgreedy = GreedySearch();
+    // Configuracion de algoritmos
+    //RandomSearch<int> ralg;
+    // GreedySearch rgreedy;
+    LocalSearch<int> rls;
 
-	vector<pair<string, MH<int> *>> algoritmos = {
-		make_pair("RandomSearch", &ralg),
-	// 	make_pair("Greedy", &rgreedy)
-	};
+    vector<pair<string, MH<int> *>> algoritmos = {
+        // make_pair("RandomSearch", &ralg),
+        // make_pair("Greedy", &rgreedy),
+        make_pair("LocalSearch", &rls)
+    };
 
 	// Cargar datos
 	Par::ProblemPar problema(7, "../datos_PAR_curso2526/zoo_set.dat", "../datos_PAR_curso2526/zoo_set_const_30.dat");
@@ -32,7 +36,7 @@ int main(int argc, char *argv[])
 
 	for (int i = 0; i < algoritmos.size(); i++) 
 	{
-		Random::seed(seed); // Reiniciar semilla para cada algoritmo para que sea justa la comparación [7]
+		Random::seed(seed); // Reiniciar semilla para cada algoritmo para que sea justa la comparacion [7]
 		cout << "Ejecutando " << algoritmos[i].first << "..." << endl;
 		
 		auto mh = algoritmos[i].second;

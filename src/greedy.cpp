@@ -2,8 +2,10 @@
 #include <greedy.h>
 #include <iostream>
 #include <pincrem.h>
+#include "ppar.h"
 
 using namespace std;
+using namespace Par;
 
 template <class T> void print_vector(string name, const vector<T> &sol) {
   cout << name << ": ";

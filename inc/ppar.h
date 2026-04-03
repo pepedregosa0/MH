@@ -58,20 +58,20 @@ public:
 	
 	void printInfo();
 
-	virtual size_t getSolutionSize() override { return num_clusters; }
+	virtual size_t getSolutionSize() override { return num_instancias; }
 
 	virtual std::pair<int, int> getSolutionDomainRange() override 
 	{
-		return std::make_pair(false, true);
+		return std::make_pair(0, num_clusters - 1);
 	}
 	
 	tFitness fitness(const tSolution<int> &solucion);
 
 	tSolution<int> createSolution() override;
 	
-	virtual bool isValid(const tSolution<int> &solution) override { return true; }
+	virtual bool isValid(const tSolution<int> &solution) override;
 
-	virtual void fix(tSolution<int> &solution) override {}
+	virtual void fix(tSolution<int> &solution) override;
 };
 
 }
