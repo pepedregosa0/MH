@@ -7,7 +7,7 @@ namespace Par {
 /////////////////////////////////////////////////////////
 /// Calculo de la distancia euclidea entre dos instancias
 /////////////////////////////////////////////////////////
-double Distancia(const std::vector<float> &instancia1, const std::vector<float> &instancia2);
+double Distancia(const std::vector<double> &instancia1, const std::vector<double> &instancia2);
 
 struct Restriccion
 {
@@ -19,7 +19,7 @@ struct Restriccion
 class ProblemPar : public Problem<int> 
 {
 private:
-	std::vector<std::vector<float>> instancias;
+	std::vector<std::vector<double>> instancias;
 	std::vector<std::vector<short>> m_restricciones;
 	std::vector<Restriccion> l_restricciones;
 	size_t num_instancias;
@@ -41,8 +41,14 @@ private:
 	/// Funciones auxiliares para el calculo del fitness
 	////////////////////////////////////////////////////
 	void CalcularLambda();
-	double CalcularDesviacion(const tSolution<int> &solucion);
 	int CalcularInfeasibility(const tSolution<int> &solucion);
+	double CalcularDesviacion(const tSolution<int> &solucion);
+
+	////////////////////////////////////////////////////
+	/// Funciones auxiliares para el calculo de la desviacion
+	////////////////////////////////////////////////////
+	std::vector<std::vector<double>> CalcularCentroides(const tSolution<int> &solucion);
+    double CalcularDistanciaIntraCluster(int cluster, const std::vector<double> &centroide, const tSolution<int> &solucion);
 
 public:
 	ProblemPar(size_t num_clusters, std::string ruta_instancias, std::string ruta_restricciones);
@@ -64,19 +70,7 @@ public:
 		return (desviacion + this->lambda * infeasibility);
 	}
 
-	tSolution<int> createSolution() override 
-	{
-		tSolution<int> solucion(this->num_instancias);
-		std::vector<int> contador_clusters(this->num_clusters, 0);
-
-		for (size_t i = 0; i < this->num_instancias; i++)
-		{
-			int cluster_rand = Random::get<int>(0, this->num_clusters - 1);
-			solucion[i] = cluster_rand;
-			contador_clusters[cluster_rand]++;
-		}
-		return solucion;
-	}
+	tSolution<int> createSolution();
 
 	virtual bool isValid(const tSolution<int> &solution) override { return true; }
 

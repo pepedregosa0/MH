@@ -8,7 +8,7 @@
 
 using namespace Par;
 
-double Par::Distancia(const std::vector<float> &instancia1, const std::vector<float> &instancia2)
+double Par::Distancia(const std::vector<double> &instancia1, const std::vector<double> &instancia2)
 {
 	double distancia = 0;
 	for (int i = 0; i < instancia1.size(); i++)
@@ -41,10 +41,10 @@ int ProblemPar::CargarInstancias(std::string ruta_instancias)
 	{
 		std::stringstream ss(linea);
 		std::string valor;
-		std::vector<float> fila;
+		std::vector<double> fila;
 
 		while (std::getline(ss, valor, ','))
-			fila.push_back(stof(valor));
+			fila.push_back(stod(valor));
 		
 		this->instancias.push_back(fila);
 	}
@@ -116,21 +116,17 @@ void ProblemPar::CalcularLambda()
 		this->lambda = 0.0;
 }
 
-double ProblemPar::CalcularDesviacion(const tSolution<int> &solucion)
-{
-	return 0;
-}
 
 int ProblemPar::CalcularInfeasibility(const tSolution<int> &solucion)
 {
 	int infeasibility = 0;
-
+	
 	for (size_t k = 0; k < l_restricciones.size(); k++)
 	{
 		unsigned i = l_restricciones[k].i;
 		unsigned j = l_restricciones[k].j;
 		int tipo = l_restricciones[k].tipo;
-
+		
 		if (tipo == 1 && solucion[i] != solucion[j])
 			infeasibility++;
 		else if (tipo == -1 && solucion[i] == solucion[j])
@@ -138,6 +134,61 @@ int ProblemPar::CalcularInfeasibility(const tSolution<int> &solucion)
 	}
 	return infeasibility;
 }
+
+double ProblemPar::CalcularDesviacion(const tSolution<int> &solucion)
+{
+	// Calcular los centroides de cada cluster
+	std::vector<std::vector<double>> centroides = CalcularCentroides(solucion);
+	double desviacion = 0.0;
+
+	for (size_t c = 0; c < num_clusters; c++)
+		desviacion += CalcularDistanciaIntraCluster(c, centroides[c], solucion);
+	return desviacion / num_clusters;
+}
+
+std::vector<std::vector<double>> ProblemPar::CalcularCentroides(const tSolution<int> &solucion)
+{
+    size_t num_caracteristicas = instancias.size();
+    std::vector<std::vector<double>> centroides(num_clusters, std::vector<double>(num_caracteristicas, 0.0));
+    std::vector<int> tamano_cluster(num_clusters, 0);
+
+    // Sum caracteristicas por cada cluster
+    for (size_t i = 0; i < num_instancias; i++) 
+    {
+        int c = solucion[i];
+        tamano_cluster[c]++;
+        for (size_t j = 0; j < num_caracteristicas; j++) 
+            centroides[c][j] += instancias[i][j];
+    }
+
+    // Dividir entre el tamaño para obtener el promedio
+    for (size_t c = 0; c < num_clusters; c++) 
+        if (tamano_cluster[c] > 0) 
+            for (size_t j = 0; j < num_caracteristicas; j++) 
+                centroides[c][j] /= tamano_cluster[c];
+    return centroides;
+}
+
+double ProblemPar::CalcularDistanciaIntraCluster(int cluster, const std::vector<double> &centroide, const tSolution<int> &solucion)
+{
+    double dist_total = 0.0;
+    int tamano = 0;
+
+    // Sumar las distancias de las instancias que pertenecen a este clúster
+    for (size_t i = 0; i < num_instancias; i++) 
+    {
+        if (solucion[i] == cluster) 
+        {
+            dist_total += Distancia(instancias[i], centroide);
+            tamano++;
+        }
+    }
+
+    // Devolver la media
+    if (tamano > 0) return dist_total / tamano;
+    return 0.0;
+}
+
 
 ////////////////////
 /// PUBLIC FUNCTIONS
@@ -165,13 +216,27 @@ void ProblemPar::printInfo()
     std::cout << "Valor de Lambda calculado: " << lambda << std::endl;
 
     if (num_instancias > 0) {
-        for (std::vector<float> row : instancias) 
+        for (std::vector<double> row : instancias) 
 		{
-			for (float value : row)
+			for (double value : row)
             	std::cout << value << " ";
 			std::cout << std::endl;
         }
         std::cout << std::endl;
     }
     std::cout << "-----------------------------" << std::endl;
+}
+
+tSolution<int> ProblemPar::createSolution() override 
+{
+	tSolution<int> solucion(this->num_instancias);
+	std::vector<int> contador_clusters(this->num_clusters, 0);
+
+	for (size_t i = 0; i < this->num_instancias; i++)
+	{
+		int cluster_rand = Random::get<int>(0, this->num_clusters - 1);
+		solucion[i] = cluster_rand;
+		contador_clusters[cluster_rand]++;
+	}
+	return solucion;
 }
