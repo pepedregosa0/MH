@@ -44,7 +44,7 @@ int ProblemPar::CargarInstancias(std::string ruta_instancias)
 		std::vector<double> fila;
 
 		while (std::getline(ss, valor, ','))
-			fila.push_back(stod(valor));
+			fila.push_back(std::stod(valor));
 		
 		this->instancias.push_back(fila);
 	}
@@ -78,7 +78,7 @@ int ProblemPar::CargarRestricciones(std::string ruta_restricciones)
 
 		while (std::getline(ss, valor, ','))
 		{
-			int tipo_restriccion = stoi(valor);
+			int tipo_restriccion = std::stoi(valor);
 			this->m_restricciones[i][j] = tipo_restriccion;
 			if (i < j && tipo_restriccion != 0)
 			{
