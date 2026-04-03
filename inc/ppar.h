@@ -65,15 +65,10 @@ public:
 		return std::make_pair(false, true);
 	}
 	
-	tFitness fitness(const tSolution<int> &solucion) override
-	{
-		double desviacion = CalcularDesviacion(solucion);
-		int infeasibility = CalcularInfeasibility(solucion);
-	
-		return (desviacion + this->lambda * infeasibility);
-	}
+	tFitness fitness(const tSolution<int> &solucion);
 
 	tSolution<int> createSolution() override;
+	
 	virtual bool isValid(const tSolution<int> &solution) override { return true; }
 
 	virtual void fix(tSolution<int> &solution) override {}

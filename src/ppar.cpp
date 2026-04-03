@@ -241,6 +241,14 @@ void ProblemPar::printInfo()
     std::cout << "-----------------------------" << std::endl;
 }
 
+tFitness ProblemPar::fitness(const tSolution<int> &solucion)
+{
+	double desviacion = CalcularDesviacion(solucion);
+	int infeasibility = CalcularInfeasibility(solucion);
+
+	return (desviacion + this->lambda * infeasibility);
+}
+
 tSolution<int> ProblemPar::createSolution()
 {
 	tSolution<int> solucion(this->num_instancias);
