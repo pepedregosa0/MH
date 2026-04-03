@@ -189,31 +189,6 @@ double ProblemPar::CalcularDistanciaIntraCluster(int cluster, const std::vector<
     return 0.0;
 }
 
-int ProblemPar::IncrementoInfeasibility(int instancia_i, int cluster_c, const tSolution<int> &solucion_actual)
-{
-    int penalizacion = 0;
-    
-    // Recorremos la fila de la instancia_i en la matriz para ver sus relaciones con cada instancia j
-    for (size_t j = 0; j < num_instancias; j++)
-    {
-        int tipo_restriccion = m_restricciones[instancia_i][j];
-        
-        if (tipo_restriccion != 0 && instancia_i != j) 
-        {
-            int cluster_j = solucion_actual[j];
-            
-            // Si es Must-Link (1) y las estamos poniendo en clusters distintos
-            if (tipo_restriccion == 1 && cluster_c != cluster_j)
-                penalizacion++;
-            // Si es Cannot-Link (-1) y las estamos poniendo en el mismo cluster
-            else if (tipo_restriccion == -1 && cluster_c == cluster_j)
-                penalizacion++;
-        }
-    }
-    return penalizacion;
-}
-
-
 ////////////////////
 /// PUBLIC FUNCTIONS
 ////////////////////
@@ -245,67 +220,67 @@ tFitness ProblemPar::fitness(const tSolution<int> &solucion)
 {
 	double desviacion = CalcularDesviacion(solucion);
 	int infeasibility = CalcularInfeasibility(solucion);
-
+	
 	return (desviacion + this->lambda * infeasibility);
 }
 
 tSolution<int> ProblemPar::createSolution()
 {
 	tSolution<int> solucion(this->num_instancias);
-
+	
 	for (size_t i = 0; i < this->num_instancias; i++)
-		solucion[i] = Random::get<int>(0, this->num_clusters - 1);
-
+	solucion[i] = Random::get<int>(0, this->num_clusters - 1);
+	
 	if (!isValid(solucion))
-		fix(solucion);
-
+	fix(solucion);
+	
 	return solucion;
 }
 
 bool ProblemPar::isValid(const tSolution<int> &solution) 
 { 
-    // Creamos un vector de contadores inicializado a 0 para cada cluster
+	// Creamos un vector de contadores inicializado a 0 para cada cluster
     std::vector<int> tamano_cluster(this->num_clusters, 0);
-
+	
     // Contamos cuantas instancias tiene cada cluster en esta solucion
     for (size_t i = 0; i < this->num_instancias; i++)
-        tamano_cluster[solution[i]]++;
-
+	tamano_cluster[solution[i]]++;
+	
     // Comprobamos si algun cluster se ha quedado vacio
     for (size_t c = 0; c < this->num_clusters; c++) 
     {
-        if (tamano_cluster[c] == 0) 
-            return false;
+		if (tamano_cluster[c] == 0) 
+		return false;
     }
-
+	
     return true; // Todos los clusteres tienen al menos 1 instancia
 }
 
 void ProblemPar::fix(tSolution<int> &solution) 
 {
-    std::vector<int> tamano_cluster(this->num_clusters, 0);
-
+	std::vector<int> tamano_cluster(this->num_clusters, 0);
+	
     // Contar cuantas instancias tiene cada cluster actualmente
     for (size_t i = 0; i < this->num_instancias; i++) 
-        tamano_cluster[solution[i]]++;
-
+	tamano_cluster[solution[i]]++;
+	
     // Comprobar si algun grupo se ha quedado vacio
     for (size_t c = 0; c < this->num_clusters; c++) 
     {
-        if (tamano_cluster[c] == 0) 
+		if (tamano_cluster[c] == 0) 
         {
-            // Buscar un cluster tenga mas de 1 instancia
+			// Buscar un cluster tenga mas de 1 instancia
             int cluster_donante = -1;
             do {
-                cluster_donante = Random::get<int>(0, this->num_clusters - 1);
+				cluster_donante = Random::get<int>(0, this->num_clusters - 1);
             } while (tamano_cluster[cluster_donante] <= 1);
-
+			
             // Robar su primera instancia y asignarla al cluster vacio 'c'
             for (size_t i = 0; i < this->num_instancias; i++) 
             {
-                if (solution[i] == cluster_donante) 
+				if (solution[i] == cluster_donante) 
                 {
-                    solution[i] = c;
+					solution[i] = c;
                     tamano_cluster[cluster_donante]--;
                     tamano_cluster[c]++;
                     break; // siguiente cluster vacio
@@ -313,4 +288,28 @@ void ProblemPar::fix(tSolution<int> &solution)
             }
         }
     }
+}
+
+int ProblemPar::IncrementoInfeasibility(int instancia_i, int cluster_c, const tSolution<int> &solucion_actual)
+{
+	int penalizacion = 0;
+	
+	// Recorremos la fila de la instancia_i en la matriz para ver sus relaciones con cada instancia j
+	for (size_t j = 0; j < num_instancias; j++)
+	{
+		int tipo_restriccion = m_restricciones[instancia_i][j];
+		
+		if (tipo_restriccion != 0 && instancia_i != j) 
+		{
+			int cluster_j = solucion_actual[j];
+			
+			// Si es Must-Link (1) y las estamos poniendo en clusters distintos
+			if (tipo_restriccion == 1 && cluster_c != cluster_j)
+				penalizacion++;
+			// Si es Cannot-Link (-1) y las estamos poniendo en el mismo cluster
+			else if (tipo_restriccion == -1 && cluster_c == cluster_j)
+				penalizacion++;
+		}
+	}
+	return penalizacion;
 }

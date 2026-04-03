@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     LocalSearch<int> rls;
 
     vector<pair<string, MH<int> *>> algoritmos = {
-        // make_pair("RandomSearch", &ralg),
+        make_pair("RandomSearch", &ralg),
         // make_pair("Greedy", &rgreedy),
         make_pair("LocalSearch", &rls)
     };

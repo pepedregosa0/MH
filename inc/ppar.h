@@ -44,34 +44,38 @@ private:
 	int CalcularInfeasibility(const tSolution<int> &solucion);
 	double CalcularDesviacion(const tSolution<int> &solucion);
 
-	////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////
 	/// Funciones auxiliares para el calculo de la desviacion
-	////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////
 	std::vector<std::vector<double>> CalcularCentroides(const tSolution<int> &solucion);
     double CalcularDistanciaIntraCluster(int cluster, const std::vector<double> &centroide, const tSolution<int> &solucion);
 
 
-	int IncrementoInfeasibility(int instancia_i, int cluster_c, 
-								const tSolution<int> &solucion_actual);
-public:
+	public:
 	ProblemPar(size_t num_clusters, std::string ruta_instancias, std::string ruta_restricciones);
 	
 	void printInfo();
-
+	
 	virtual size_t getSolutionSize() override { return num_instancias; }
-
+	
 	virtual std::pair<int, int> getSolutionDomainRange() override 
 	{
 		return std::make_pair(0, num_clusters - 1);
 	}
 	
 	tFitness fitness(const tSolution<int> &solucion);
-
+	
 	tSolution<int> createSolution() override;
 	
 	virtual bool isValid(const tSolution<int> &solution) override;
-
+	
 	virtual void fix(tSolution<int> &solution) override;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	/// Funcion para el algoritmo greedy, calcula incremento al asignar una instancia a un cluster
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	int IncrementoInfeasibility(int instancia_i, int cluster_c, 
+								const tSolution<int> &solucion_actual);
 };
 
 }

@@ -51,14 +51,13 @@ public:
         tSolution<tDomain> sol_actual = problem.createSolution();
         tFitness fitness_actual = problem.fitness(sol_actual);
         
-        int evaluaciones = 1;
+        int evaluaciones = 1; // Ya hemos evaluado la solucion inicial
         bool hay_mejora = true;
 
         while (evaluaciones < maxevals && hay_mejora) 
         {
             hay_mejora = false;
 
-            // Usamos las funciones auxiliares para que el codigo quede limpio
             auto vecindario = GenerarVecindarioVirtual(sol_actual, problem);
             BarajarVecindario(vecindario);
 
@@ -75,7 +74,8 @@ public:
                 sol_actual[indice] = nuevo_valor;
 
                 // Comprobar que el vecino es valido (no deja clusters vacios)
-                if (!problem.isValid(sol_actual)) {
+                if (!problem.isValid(sol_actual)) 
+                {
                     sol_actual[indice] = valor_antiguo; // Deshacer y saltar
                     continue;
                 }
@@ -88,9 +88,9 @@ public:
                     fitness_actual = fitness_vecino;
                     hay_mejora = true;
                     break; // Al ser primer mejor, cortamos y empezamos de nuevo
-                } else {
+                } 
+                else
                     sol_actual[indice] = valor_antiguo; // Deshacer
-                }
             }
         }
 

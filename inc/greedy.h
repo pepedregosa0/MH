@@ -17,17 +17,20 @@ using ResultMHInt = ResultMH<int>;
 
 class GreedySearch : public MHInt 
 {
+private:
+	ResultMHInt RandomShuffle() {}
 public:
-  GreedySearch() : MH() {}
-  virtual ~GreedySearch() {}
-  // Implement the MH interface methods
-  /**
-   * Create random solutions until maxevals has been achieved, and returns the
-   * best one.
-   *
-   * @param problem The problem to be optimized
-   * @param maxevals Maximum number of evaluations allowed
-   * @return A pair containing the best solution found and its fitness
-   */
-  virtual ResultMH<int> optimize(Problem<int> &problem, int maxevals);
+	GreedySearch() : MH() {}
+	virtual ~GreedySearch() {}
+	// Implement the MH interface methods
+	/**
+	 * Create random solutions until maxevals has been achieved, and returns the
+	 * best one.
+	 *
+	 * @param problem The problem to be optimized
+	 * @param maxevals Maximum number of evaluations allowed
+	 * @return A pair containing the best solution found and its fitness
+	 */
+	virtual ResultMH<int> optimize(Problem<int> &problem, int maxevals);
+
 };

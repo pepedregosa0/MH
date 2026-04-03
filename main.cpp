@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
   {
     // Use a fixed seed for reproducibility
     seed = 42;
-  } 
+  }
   else 
   {
     seed = atoi(argv[1]);
