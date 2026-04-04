@@ -117,6 +117,8 @@ int main(int argc, char *argv[])
 		cout << "Mejor solucion: " << result.solution << endl;
 		cout << "Mejor fitness: " << result.fitness << endl;
 		cout << "Evaluationes: " << result.evaluations << endl;
+		cout << "Desviacion: " << problema.CalcularDesviacion(result.solution) << endl;
+		cout << "Infeasibility: " << problema.CalcularInfeasibility(result.solution) << endl;
 	}
 	else if (modo == 'c') // Modo CSV para boxplot
 	{
@@ -187,6 +189,7 @@ int main(int argc, char *argv[])
 			media_evaluaciones /= n_ejecuciones;
 			media_tiempo /= n_ejecuciones;
 
+			// Printf porque resulta mas facil para formatear la tabla con alineacion decimal
             printf("%s & %.3f & %.3f & %.3f & %.0f & %.4f \\\\\n", 
                    nombre.c_str(),
 				   media_fitness,
