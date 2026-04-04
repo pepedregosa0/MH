@@ -39,7 +39,7 @@ void print_use()
 	cout << "Uso: ./main -d <dataset> -c <restricciones> -m <modo> [opciones]\n\n";
     cout << "Argumentos obligatorios:\n";
     cout << "  -d <archivo>    Ruta al archivo de datos (.dat)\n";
-    cout << "  -c <archivo>    Ruta al archivo de restricciones (.const)\n";
+    cout << "  -c <archivo>    Ruta al archivo de restricciones (_const.dat)\n";
     cout << "  -m <modo>       Modo de ejecución: 'i' (individual), 't' (tabla), 'c' (csv)\n\n";
     cout << "Opciones extra:\n";
     cout << "  -s <semilla>    Semilla aleatoria (por defecto: 42)\n";

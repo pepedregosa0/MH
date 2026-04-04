@@ -1,5 +1,3 @@
--------------------------------------------------------------------------------
-
 ===============================================================================
 PRÁCTICA 1: TÉCNICAS DE BÚSQUEDA DE POBLACIONES PARA EL PAR
 ===============================================================================
@@ -67,7 +65,7 @@ recompilación entre distintas pruebas.
 
 Argumentos obligatorios:
   -d <archivo>    Ruta al archivo de datos (.dat)
-  -c <archivo>    Ruta al archivo de restricciones (.const)
+  -c <archivo>    Ruta al archivo de restricciones (_const.dat)
   -m <modo>       Modo de ejecución: 'i' (individual), 't' (tabla), 'c' (csv)
 
 Opciones extra:
@@ -106,6 +104,4 @@ Idem para generar los CSV individuales para boxplots:
   ./ejecutar_para_boxplot.sh
 
 Generará una carpeta 'resultados_csv' con los CSV de cada ejecución para cada dataset.
-
-
 -------------------------------------------------------------------------------
