@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DIR_DATOS="../datos_PAR_curso2526/"
-DIR_RESULTADOS="../resultados_boxplot/"
+DIR_RESULTADOS="./resultados_boxplot/"
 SEMILLA=42
 N_EJECUCIONES=10
 
@@ -17,12 +17,6 @@ if [ $? -ne 0 ]; then
 fi
 
 mkdir -p ${DIR_RESULTADOS}
-touch ${DIR_RESULTADOS}resultados_zoo_15.csv
-touch ${DIR_RESULTADOS}resultados_zoo_30.csv
-touch ${DIR_RESULTADOS}resultados_glass_15.csv
-touch ${DIR_RESULTADOS}resultados_glass_30.csv
-touch ${DIR_RESULTADOS}resultados_bupa_15.csv
-touch ${DIR_RESULTADOS}resultados_bupa_30.csv
 
 # Dataset Zoo
 echo "Procesando Zoo..."

@@ -1,0 +1,104 @@
+-------------------------------------------------------------------------------
+
+===============================================================================
+PRÁCTICA 1: TÉCNICAS DE BÚSQUEDA DE POBLACIONES PARA EL PAR
+===============================================================================
+Autor: José Pedregosa García
+Asignatura: Metaheurísticas (Curso 2025-26)
+===============================================================================
+
+1. DESCRIPCIÓN DE LA ESTRUCTURA DE DIRECTORIOS Y FICHEROS
+-------------------------------------------------------------------------------
+El proyecto sigue una estructura modular para separar el framework base de las 
+implementaciones específicas del problema PAR:
+
+Directorio Raíz:
+  - main.cpp: Fichero principal para la ejecución de los algoritmos, 
+    parsea los argumentos por consola y formatea la salida (CSV o LaTeX).
+  - CMakeLists.txt: Archivo de configuración para generar el Makefile.
+  - ejecucion_tablas.sh: Script de Bash para ejecutar automáticamente los 6 
+    datasets y generar el código LaTeX de las tablas.
+  - ejecutar_para_boxplot.sh: Script de Bash para ejecutar los datasets y 
+    exportar los resultados individuales en formato CSV para generar boxplots.
+  - clean.sh: Script auxiliar para limpiar los ficheros de compilación.
+
+Directorio 'common/' (Framework base del profesor - SIN MODIFICAR):
+  - mh.h / mhtrayectory.h: Interfaces base para las metaheurísticas.
+  - problem.h: Interfaz abstracta genérica para los problemas.
+  - solution.h: Definición de la estructura de las soluciones.
+  - random.hpp: Generador de números pseudoaleatorios proporcionado.
+  - util.h: Función para printear vectores.
+
+Directorio 'inc/' (Ficheros de cabecera):
+  - ppar.h: Definición de la clase ProblemPar (hereda de Problem<int>) que 
+    modela el Problema de Agrupamiento con Restricciones.
+  - greedy.h: Cabecera del algoritmo constructivo GreedySearch.
+  - localsearch.h: Cabecera y desarrollo del algoritmo de Búsqueda Local.
+  - randomsearch.h: Cabecera y desarrollo de la Metaheurística Aleatoria.
+  - pincrem.h: Problema del portfolio (Original del framework, sin modificar).
+
+Directorio 'src/' (Ficheros de código fuente):
+  - ppar.cpp: Implementación de la evaluación del fitness, desviación general, 
+    infeasibility, y validación/reparación de soluciones del PAR.
+  - greedy.cpp: Implementación algorítmica del K-medias Restringido Débil.
+
+
+2. INSTRUCCIONES DE COMPILACIÓN
+-------------------------------------------------------------------------------
+El proyecto utiliza CMake para facilitar la compilación multiplataforma. Para 
+compilar el ejecutable, sitúese en el directorio raíz del proyecto y ejecute 
+los siguientes comandos en la terminal:
+
+  1. cmake .
+  2. make
+
+Esto generará el ejecutable llamado 'main' en el directorio raíz.
+Compila correctamente en sistemas Debian en Arch no se me instalaba cmake.
+
+
+3. MANUAL DE USUARIO Y EJEMPLOS DE EJECUCIÓN
+-------------------------------------------------------------------------------
+El programa se ha diseñado para que reciba todos los parámetros mediante 
+argumentos por consola, cumpliendo así el requisito de no requerir 
+recompilación entre distintas pruebas.
+
+[Sintaxis general]
+./main -d <datos.dat> -c <restricciones.const> -m <modo> [opciones]
+
+Argumentos obligatorios:
+  -d <archivo>    Ruta al archivo de datos (.dat)
+  -c <archivo>    Ruta al archivo de restricciones (.const)
+  -m <modo>       Modo de ejecución: 'i' (individual), 't' (tabla), 'c' (csv)
+
+Opciones extra:
+  -s <semilla>    Semilla aleatoria (por defecto: 42)
+  -a <algoritmo>  Nombre del algoritmo (obligatorio en modo 'i')
+                  Algoritmos disponibles: Random, Greedy, BL
+  -n <ejecs>      Número de ejecuciones (para modo 'c', por defecto: 10)
+  -k <clusters>   Número de clusters (por defecto: 7)
+  -e <evals>      Número de evaluaciones (por defecto: 100000)
+  -h              Mostrar esta ayuda
+
+En los scripts se presupone que los datos se encuentran en el directorio
+'../datos_PAR_curso2526/' con los nombres especificados en el enunciado.
+
+[Ejemplo de Ejecución Manual]
+Para ejecutar el dataset de Zoo con 15% de restricciones, k=7, realizando 
+10 ejecuciones independientes con semilla base 42 y salida en tabla LaTeX:
+
+  ./main -d ../datos_PAR_curso2526/zoo_set.dat -c ../datos_PAR_curso2526/zoo_set_const_15.dat -k 7 -n 10 -s 42 -m t
+
+[Uso de Scripts Automáticos]
+Para mayor comodidad en la corrección, se han incluido scripts que lanzan de 
+forma secuencial y automática las 6 configuraciones de bases de datos exigidas 
+(Zoo, Glass y Bupa al 15% y 30%). 
+Se deben otorgar permisos de ejecución antes de usarlos:
+
+  chmod +x ejecucion_tablas.sh
+  ./ejecucion_tablas.sh
+
+Esto compilará el programa automáticamente y mostrará por pantalla todo el 
+código LaTeX listo para compilar en la memoria de la práctica.
+
+
+-------------------------------------------------------------------------------

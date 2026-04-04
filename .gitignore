@@ -43,3 +43,4 @@ entrada.txt
 *.csv
 *.png
 boxplot.py
+*.tex
