@@ -62,10 +62,8 @@ public:
             BarajarVecindario(vecindario);
 
             // Bucle de exploracion "Primer Mejor"
-            for (size_t v = 0; v < vecindario.size(); v++) 
+            for (size_t v = 0; v < vecindario.size() && evaluaciones < maxevals; v++) 
             {
-                if (evaluaciones >= maxevals) break;
-
                 int indice = vecindario[v].first;
                 tDomain nuevo_valor = vecindario[v].second;
                 tDomain valor_antiguo = sol_actual[indice];

@@ -19,19 +19,24 @@ int main(int argc, char *argv[])
 {
 	long int seed = 42; // Semilla por defecto
 
+	if (argc > 1)
+		seed = std::stol(argv[1]);
+
     // Configuracion de algoritmos
-    //RandomSearch<int> ralg;
-    // GreedySearch rgreedy;
+    RandomSearch<int> ralg;
+    GreedySearch rgreedy;
     LocalSearch<int> rls;
 
     vector<pair<string, MH<int> *>> algoritmos = {
-        // make_pair("RandomSearch", &ralg),
-        // make_pair("Greedy", &rgreedy),
+        make_pair("RandomSearch", &ralg),
+        make_pair("Greedy", &rgreedy),
         make_pair("LocalSearch", &rls)
     };
 
 	// Cargar datos
-	Par::ProblemPar problema(7, "../datos_PAR_curso2526/zoo_set.dat", "../datos_PAR_curso2526/zoo_set_const_30.dat");
+	string f_datos = "../datos_PAR_curso2526/zoo_set.dat";
+	string f_const = "../datos_PAR_curso2526/zoo_set_const_30.dat";
+	Par::ProblemPar problema(7, f_datos, f_const);
 	Problem<int> *problem = dynamic_cast<Problem<int> *>(&problema);
 
 	for (int i = 0; i < algoritmos.size(); i++) 
@@ -41,8 +46,10 @@ int main(int argc, char *argv[])
 		
 		auto mh = algoritmos[i].second;
 		
+		int num_evaluaciones = 1;
 		// Solo es para el random
-		int num_evaluaciones = 100000;
+		if (algoritmos[i].first == "RandomSearch")
+			num_evaluaciones = 100000;
 		
 		ResultMH<int> result = mh->optimize(*problem, num_evaluaciones);
 		

@@ -18,7 +18,7 @@ using ResultMHInt = ResultMH<int>;
 class GreedySearch : public MHInt 
 {
 private:
-	ResultMHInt RandomShuffle() {}
+	std::vector<int> GenerarRSI(int n);
 public:
 	GreedySearch() : MH() {}
 	virtual ~GreedySearch() {}

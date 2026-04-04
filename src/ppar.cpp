@@ -121,6 +121,7 @@ int ProblemPar::CalcularInfeasibility(const tSolution<int> &solucion)
 {
 	int infeasibility = 0;
 	
+	// Recorremos la lista de restricciones para evaluar cada una de ellas
 	for (size_t k = 0; k < l_restricciones.size(); k++)
 	{
 		unsigned i = l_restricciones[k].i;
@@ -146,44 +147,21 @@ double ProblemPar::CalcularDesviacion(const tSolution<int> &solucion)
 	return desviacion / num_clusters;
 }
 
-std::vector<std::vector<double>> ProblemPar::CalcularCentroides(const tSolution<int> &solucion)
-{
-    size_t num_caracteristicas = instancias.size();
-    std::vector<std::vector<double>> centroides(num_clusters, std::vector<double>(num_caracteristicas, 0.0));
-    std::vector<int> tamano_cluster(num_clusters, 0);
-
-    // Sum caracteristicas por cada cluster
-    for (size_t i = 0; i < num_instancias; i++) 
-    {
-        int c = solucion[i];
-        tamano_cluster[c]++;
-        for (size_t j = 0; j < num_caracteristicas; j++) 
-            centroides[c][j] += instancias[i][j];
-    }
-
-    // Dividir entre el tamaño para obtener el promedio
-    for (size_t c = 0; c < num_clusters; c++) 
-        if (tamano_cluster[c] > 0) 
-            for (size_t j = 0; j < num_caracteristicas; j++) 
-                centroides[c][j] /= tamano_cluster[c];
-    return centroides;
-}
-
 double ProblemPar::CalcularDistanciaIntraCluster(int cluster, const std::vector<double> &centroide, const tSolution<int> &solucion)
 {
-    double dist_total = 0.0;
+	double dist_total = 0.0;
     int tamano = 0;
-
+	
     // Sumar las distancias de las instancias que pertenecen a este cluster
     for (size_t i = 0; i < num_instancias; i++) 
     {
-        if (solucion[i] == cluster) 
+		if (solucion[i] == cluster) 
         {
-            dist_total += Distancia(instancias[i], centroide);
+			dist_total += Distancia(instancias[i], centroide);
             tamano++;
         }
     }
-
+	
     // Devolver la media
     if (tamano > 0) return dist_total / tamano;
     return 0.0;
@@ -290,26 +268,77 @@ void ProblemPar::fix(tSolution<int> &solution)
     }
 }
 
+// Solo para greedy
 int ProblemPar::IncrementoInfeasibility(int instancia_i, int cluster_c, const tSolution<int> &solucion_actual)
 {
 	int penalizacion = 0;
 	
-	// Recorremos la fila de la instancia_i en la matriz para ver sus relaciones con cada instancia j
-	for (size_t j = 0; j < num_instancias; j++)
-	{
-		int tipo_restriccion = m_restricciones[instancia_i][j];
-		
-		if (tipo_restriccion != 0 && instancia_i != j) 
-		{
-			int cluster_j = solucion_actual[j];
+    // Recorremos las relaciones de la instancia_i con todas las demás instancias j
+    for (size_t j = 0; j < num_instancias; j++)
+    {
+		// Solo evaluamos si j es diferente de i y si j ya tiene asignado un cluster en la solucion actual
+        if (instancia_i != j && solucion_actual[j] != -1)
+        {
+			int tipo_restriccion = m_restricciones[instancia_i][j]; 
 			
-			// Si es Must-Link (1) y las estamos poniendo en clusters distintos
-			if (tipo_restriccion == 1 && cluster_c != cluster_j)
-				penalizacion++;
-			// Si es Cannot-Link (-1) y las estamos poniendo en el mismo cluster
-			else if (tipo_restriccion == -1 && cluster_c == cluster_j)
-				penalizacion++;
-		}
+            if (tipo_restriccion == 1 && cluster_c != solucion_actual[j]) // Must-Link
+			penalizacion++;
+            else if (tipo_restriccion == -1 && cluster_c == solucion_actual[j]) // Cannot-Link
+			penalizacion++;
+        }
 	}
 	return penalizacion;
+}
+
+std::vector<std::vector<double>> ProblemPar::GenerarCentroidesAleatorios()
+{
+	size_t num_caracteristicas = instancias.size();
+    std::vector<std::vector<double>> centroides_iniciales(num_clusters, std::vector<double>(num_caracteristicas));
+	
+    // Para cada dimensión (característica), buscamos su min y max
+    for (size_t j = 0; j < num_caracteristicas; j++) 
+    {
+		double min_val = instancias[0][j];
+        double max_val = instancias[0][j];
+		
+        for (size_t i = 1; i < num_instancias; i++) 
+        {
+			if (instancias[i][j] < min_val) min_val = instancias[i][j];
+            if (instancias[i][j] > max_val) max_val = instancias[i][j];
+        }
+		
+        // Generamos el valor aleatorio para esta dimensión en los k centroides
+        for (size_t c = 0; c < num_clusters; c++) 
+		centroides_iniciales[c][j] = Random::get<double>(min_val, max_val);
+    }
+	
+    return centroides_iniciales;
+}
+
+std::vector<std::vector<double>> &ProblemPar::getInstancias()
+{
+	return this->instancias;
+}
+
+std::vector<std::vector<double>> ProblemPar::CalcularCentroides(const tSolution<int> &solucion)
+{
+	size_t num_caracteristicas = instancias.size();
+	std::vector<std::vector<double>> centroides(num_clusters, std::vector<double>(num_caracteristicas, 0.0));
+	std::vector<int> tamano_cluster(num_clusters, 0);
+
+	// Sum caracteristicas por cada cluster
+	for (size_t i = 0; i < num_instancias; i++) 
+	{
+		int c = solucion[i];
+		tamano_cluster[c]++;
+		for (size_t j = 0; j < num_caracteristicas; j++) 
+			centroides[c][j] += instancias[i][j];
+	}
+
+	// Dividir entre el tamaño para obtener el promedio
+	for (size_t c = 0; c < num_clusters; c++) 
+		if (tamano_cluster[c] > 0) 
+			for (size_t j = 0; j < num_caracteristicas; j++) 
+				centroides[c][j] /= tamano_cluster[c];
+	return centroides;
 }

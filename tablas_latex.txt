@@ -1,0 +1,131 @@
+Compilando...
+-- Configuring done (0.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/josepc/uni/MH
+[100%] Built target main
+Compilación exitosa. Iniciando las 6 ejecuciones...
+----------------------------------------------------
+==========================================================
+ Ejecutando experimentos para GLASS k=7 
+==========================================================
+Archivo de datos: ../datos_PAR_curso2526/glass_set.dat
+Archivo de restricciones: ../datos_PAR_curso2526/glass_set_const_15.dat
+Modo de ejecución: t
+Número de ejecuciones: 10
+Número de clusters: 7
+Número de evaluaciones: 100000
+\begin{table}[htpb]
+\centering
+\caption{Resultados obtenidos para el dataset ../datos_PAR_curso2526/glass_set.dat con archivo ../datos_PAR_curso2526/glass_set_const_15.dat}
+\begin{tabular}{lccccc}
+\hline
+Algoritmo & Fitness & Distancia & Incumplimiento & Evaluaciones & Tiempo (seg) \\
+\hline
+BL & 0.400 & 0.296 & 157.100 & 20759 & 0.3204 \\
+Greedy & 0.485 & 0.426 & 88.700 & 1 & 0.0028 \\
+Random & 0.682 & 0.426 & 386.600 & 100000 & 1.8772 \\
+\hline
+\end{tabular}
+\end{table}
+Archivo de datos: ../datos_PAR_curso2526/glass_set.dat
+Archivo de restricciones: ../datos_PAR_curso2526/glass_set_const_30.dat
+Modo de ejecución: t
+Número de ejecuciones: 10
+Número de clusters: 7
+Número de evaluaciones: 100000
+\begin{table}[htpb]
+\centering
+\caption{Resultados obtenidos para el dataset ../datos_PAR_curso2526/glass_set.dat con archivo ../datos_PAR_curso2526/glass_set_const_30.dat}
+\begin{tabular}{lccccc}
+\hline
+Algoritmo & Fitness & Distancia & Incumplimiento & Evaluaciones & Tiempo (seg) \\
+\hline
+BL & 0.466 & 0.285 & 566.400 & 18036 & 0.3155 \\
+Greedy & 0.560 & 0.427 & 414.600 & 1 & 0.0030 \\
+Random & 0.697 & 0.421 & 860.100 & 100000 & 2.3747 \\
+\hline
+\end{tabular}
+\end{table}
+==========================================================
+ Ejecutando experimentos para ZOO k=7 
+==========================================================
+Archivo de datos: ../datos_PAR_curso2526/zoo_set.dat
+Archivo de restricciones: ../datos_PAR_curso2526/zoo_set_const_15.dat
+Modo de ejecución: t
+Número de ejecuciones: 10
+Número de clusters: 7
+Número de evaluaciones: 100000
+\begin{table}[htpb]
+\centering
+\caption{Resultados obtenidos para el dataset ../datos_PAR_curso2526/zoo_set.dat con archivo ../datos_PAR_curso2526/zoo_set_const_15.dat}
+\begin{tabular}{lccccc}
+\hline
+Algoritmo & Fitness & Distancia & Incumplimiento & Evaluaciones & Tiempo (seg) \\
+\hline
+BL & 1.089 & 0.923 & 30.000 & 6342 & 0.0270 \\
+Greedy & 1.474 & 1.460 & 2.500 & 1 & 0.0005 \\
+Random & 1.916 & 1.483 & 78.100 & 100000 & 0.5380 \\
+\hline
+\end{tabular}
+\end{table}
+Archivo de datos: ../datos_PAR_curso2526/zoo_set.dat
+Archivo de restricciones: ../datos_PAR_curso2526/zoo_set_const_30.dat
+Modo de ejecución: t
+Número de ejecuciones: 10
+Número de clusters: 7
+Número de evaluaciones: 100000
+\begin{table}[htpb]
+\centering
+\caption{Resultados obtenidos para el dataset ../datos_PAR_curso2526/zoo_set.dat con archivo ../datos_PAR_curso2526/zoo_set_const_30.dat}
+\begin{tabular}{lccccc}
+\hline
+Algoritmo & Fitness & Distancia & Incumplimiento & Evaluaciones & Tiempo (seg) \\
+\hline
+BL & 1.206 & 0.863 & 133.000 & 6510 & 0.0320 \\
+Greedy & 1.693 & 1.576 & 45.400 & 1 & 0.0005 \\
+Random & 1.959 & 1.471 & 189.200 & 100000 & 0.6602 \\
+\hline
+\end{tabular}
+\end{table}
+==========================================================
+ Ejecutando experimentos para BUPA k=16 
+==========================================================
+Archivo de datos: ../datos_PAR_curso2526/bupa_set.dat
+Archivo de restricciones: ../datos_PAR_curso2526/bupa_set_const_15.dat
+Modo de ejecución: t
+Número de ejecuciones: 10
+Número de clusters: 16
+Número de evaluaciones: 100000
+\begin{table}[htpb]
+\centering
+\caption{Resultados obtenidos para el dataset ../datos_PAR_curso2526/bupa_set.dat con archivo ../datos_PAR_curso2526/bupa_set_const_15.dat}
+\begin{tabular}{lccccc}
+\hline
+Algoritmo & Fitness & Distancia & Incumplimiento & Evaluaciones & Tiempo (seg) \\
+\hline
+BL & 0.172 & 0.144 & 156.200 & 80782 & 2.7386 \\
+Greedy & 0.240 & 0.239 & 6.300 & 1 & 0.0138 \\
+Random & 0.329 & 0.248 & 461.100 & 100000 & 3.8007 \\
+\hline
+\end{tabular}
+\end{table}
+Archivo de datos: ../datos_PAR_curso2526/bupa_set.dat
+Archivo de restricciones: ../datos_PAR_curso2526/bupa_set_const_30.dat
+Modo de ejecución: t
+Número de ejecuciones: 10
+Número de clusters: 16
+Número de evaluaciones: 100000
+\begin{table}[htpb]
+\centering
+\caption{Resultados obtenidos para el dataset ../datos_PAR_curso2526/bupa_set.dat con archivo ../datos_PAR_curso2526/bupa_set_const_30.dat}
+\begin{tabular}{lccccc}
+\hline
+Algoritmo & Fitness & Distancia & Incumplimiento & Evaluaciones & Tiempo (seg) \\
+\hline
+BL & 0.198 & 0.143 & 636.700 & 94856 & 3.7857 \\
+Greedy & 0.268 & 0.248 & 228.300 & 1 & 0.0173 \\
+Random & 0.333 & 0.246 & 1006.200 & 100000 & 4.6623 \\
+\hline
+\end{tabular}
+\end{table}
+----------------------------------------------------

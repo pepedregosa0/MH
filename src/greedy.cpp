@@ -16,41 +16,76 @@ template <class T> void print_vector(string name, const vector<T> &sol) {
   cout << endl;
 }
 
-ResultMHInt GreedySearch::RandomShuffle() {}
+std::vector<int> GreedySearch::GenerarRSI(int n) 
+{
+    std::vector<int> RSI(n);
+    for (int i = 0; i < n; i++)
+        RSI[i] = i;
+    
+    // Barajado de Fisher-Yates
+    for (int i = n - 1; i > 0; i--)
+	{
+        int j = Random::get<int>(0, i);
+        std::swap(RSI[i], RSI[j]);
+    }
+    return RSI;
+}
 
 ResultMHInt GreedySearch::optimize(ProblemInt &problem, int maxevals) 
 {
 	assert(maxevals > 0);
-	vector<bool> values;
-	ProblemIncrem realproblem = dynamic_cast<ProblemIncrem &>(problem); // esto solo se puede usar en greedy de verdad que suspendes te la juegas he te lo advierto
-	tSolution<int> sol(problem.getSolutionSize());
-	print_vector("sol_initial", sol);
+	// esto solo se puede usar en greedy de verdad que suspendes te la juegas he, te lo advierto
+	Par::ProblemPar &realproblem = dynamic_cast<Par::ProblemPar &>(problem);
+	
+	size_t size = problem.getSolutionSize();
+	size_t num_clusters = realproblem.getSolutionDomainRange().second + 1;
+	// Solucion sin asignar
+	tSolution<int> sol(size, -1);
 
-	auto size = problem.getSolutionSize();
+	// Generar centroides aleatorios
+	std::vector<std::vector<double>> centroides = realproblem.GenerarCentroidesAleatorios();
 
-	for (int i = 0; i < size; i++) {
-		values.push_back(i);
-	}
+	// Generar RSI
+	std::vector<int> RSI = GenerarRSI(size);
 
-	for (int r = 0; r < size / 2; r++) {
-	vector<float> heuristics;
+	// Bucle principal greedy
+	bool hay_cambios = true;
+	do {
+		hay_cambios = false;
+		
+		for (int i : RSI) 
+		{
+			int mejor_cluster = -1;
+			int menor_infeasibility = std::numeric_limits<int>::max();
+			double menor_distancia = std::numeric_limits<double>::max();
 
-	for (auto option : values) {
-		tHeuristic value = ((option % 2) == 1 ? sol.size() - option : sol.size());
-		heuristics.push_back(value);
-	}
-	// print_vector("heuristics", heuristics);
+			for (int c = 0; c < num_clusters; c++)
+			{
+				int infeasibility_actual = realproblem.IncrementoInfeasibility(i, c, sol);
+				double distancia_actual = Par::Distancia(realproblem.getInstancias()[i], centroides[c]);
 
-	auto posi = min_element(heuristics.begin(), heuristics.end());
-	int posi_int = posi - heuristics.begin();
+				if (infeasibility_actual < menor_infeasibility || 
+					(infeasibility_actual == menor_infeasibility && distancia_actual < menor_distancia)) 
+				{
+					mejor_cluster = c;
+					menor_infeasibility = infeasibility_actual;
+					menor_distancia = distancia_actual;
+				}
+			}
 
-	sol[values[posi_int]] = 1;
-	values[posi_int] = values.back();
-	values.pop_back();
-	}
+			if (sol[i] != mejor_cluster) 
+			{
+				sol[i] = mejor_cluster;
+				hay_cambios = true;
+			}
+		}
 
-	tFitness fitness = problem.fitness(sol);
-	return ResultMH(sol, fitness, 1);
+		// Recalcular centroides después de asignar todas las instancias
+		centroides = realproblem.CalcularCentroides(sol);
+
+	} while (hay_cambios);
+
+	return ResultMHInt(sol, problem.fitness(sol), 1);
 }
 
 

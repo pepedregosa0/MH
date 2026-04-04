@@ -1,3 +1,9 @@
+/*
+Archivo: ppar.h
+Autor: josepc
+Descripcion: Clase para el problema de clustering con restricciones PAR, hereda de Problem<int>
+*/
+
 #pragma once
 #include <problem.h>
 #include <vector>
@@ -37,21 +43,10 @@ private:
 	//////////////////////////////
 	int CargarRestricciones(std::string ruta_restricciones);
 
-	////////////////////////////////////////////////////
-	/// Funciones auxiliares para el calculo del fitness
-	////////////////////////////////////////////////////
-	void CalcularLambda();
-	int CalcularInfeasibility(const tSolution<int> &solucion);
-	double CalcularDesviacion(const tSolution<int> &solucion);
-
-	/////////////////////////////////////////////////////////
-	/// Funciones auxiliares para el calculo de la desviacion
-	/////////////////////////////////////////////////////////
-	std::vector<std::vector<double>> CalcularCentroides(const tSolution<int> &solucion);
     double CalcularDistanciaIntraCluster(int cluster, const std::vector<double> &centroide, const tSolution<int> &solucion);
-
-
-	public:
+	
+	
+public:
 	ProblemPar(size_t num_clusters, std::string ruta_instancias, std::string ruta_restricciones);
 	
 	void printInfo();
@@ -70,12 +65,26 @@ private:
 	virtual bool isValid(const tSolution<int> &solution) override;
 	
 	virtual void fix(tSolution<int> &solution) override;
-
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	/// Funcion para el algoritmo greedy, calcula incremento al asignar una instancia a un cluster
-	//////////////////////////////////////////////////////////////////////////////////////////////
+	
+	/////////////////////////////////////////////////////////////////////////
+	/// Funcion para el algoritmo greedy, calcula incremento de infeasibility
+	/// al asignar una instancia a un cluster
+	/////////////////////////////////////////////////////////////////////////
 	int IncrementoInfeasibility(int instancia_i, int cluster_c, 
-								const tSolution<int> &solucion_actual);
-};
+		const tSolution<int> &solucion_actual);
+		
+	std::vector<std::vector<double>> GenerarCentroidesAleatorios();
+	std::vector<std::vector<double>> CalcularCentroides(const tSolution<int> &solucion);
+	
+	std::vector<std::vector<double>> &getInstancias();
+	
+	////////////////////////////////////////////////////
+	/// Funciones auxiliares para el calculo del fitness
+	////////////////////////////////////////////////////
+	void CalcularLambda();
+	int CalcularInfeasibility(const tSolution<int> &solucion);
+	double CalcularDesviacion(const tSolution<int> &solucion);
 
+};
+	
 }
