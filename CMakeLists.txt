@@ -5,7 +5,7 @@ PROJECT(mh_p1 CXX)
 file(GLOB C_SOURCES "src/*.cpp")
 include_directories("common" "inc")
 
-add_executable(main "mainmio2.cpp" ${C_SOURCES})
+add_executable(main "main.cpp" ${C_SOURCES})
 
 
 # Enable optimization flags
