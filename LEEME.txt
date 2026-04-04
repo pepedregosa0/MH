@@ -97,8 +97,15 @@ Se deben otorgar permisos de ejecución antes de usarlos:
   chmod +x ejecucion_tablas.sh
   ./ejecucion_tablas.sh
 
-Esto compilará el programa automáticamente y mostrará por pantalla todo el 
-código LaTeX listo para compilar en la memoria de la práctica.
+Esto compilará el programa automáticamente y creará una carpeta 'resultados_latex'
+con todas las tablas para cada dataset.
+
+Idem para generar los CSV individuales para boxplots:
+
+  chmod +x ejecutar_para_boxplot.sh
+  ./ejecutar_para_boxplot.sh
+
+Generará una carpeta 'resultados_csv' con los CSV de cada ejecución para cada dataset.
 
 
 -------------------------------------------------------------------------------
