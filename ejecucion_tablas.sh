@@ -1,7 +1,7 @@
 #!/bin/bash
 # Script para obtener las tablas para la documentación, modo -m t tabla
 
-DIR_DATOS="../datos_PAR_curso2526/"
+DIR_DATOS="./datos_PAR_curso2526/"
 SEMILLA=42
 N_EJECUCIONES=10
 DIR_SALIDA="./resultados_latex/"

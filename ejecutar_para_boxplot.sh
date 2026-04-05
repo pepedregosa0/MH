@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DIR_DATOS="../datos_PAR_curso2526/"
+DIR_DATOS="./datos_PAR_curso2526/"
 DIR_RESULTADOS="./resultados_boxplot/"
 SEMILLA=42
 N_EJECUCIONES=10
