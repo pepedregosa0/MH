@@ -20,7 +20,7 @@ Dado que encontrar una partición que satisfaga el 100% de las restricciones pue
 El framework incluye el diseño y adaptación de tres enfoques de resolución:
 
 1. **Búsqueda Aleatoria (Random Search):** Algoritmo de exploración estocástica ciega que genera soluciones aleatorias factibles, utilizado como *baseline* comparativo.
-2. **Algoritmo Greedy (COPKM):** Enfoque constructivo determinista basado en una modificación del algoritmo *K-Medias* [4, 6]. Selecciona iterativamente la asignación que menor incremento de infactibilidad produce.
+2. **Algoritmo Greedy (COPKM):** Enfoque constructivo determinista basado en una modificación del algoritmo *K-Medias*. Selecciona iterativamente la asignación que menor incremento de infactibilidad produce.
 3. **Búsqueda Local (BL):** Metaheurística basada en trayectorias que utiliza la estrategia del **Primer Mejor** (*First Improvement*). Emplea un vecindario dinámico generado mediante el cambio individual de clúster y un operador de reparación inteligente para la solución inicial.
 
 ## Estructura del Proyecto
