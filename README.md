@@ -1,138 +1,73 @@
-# C++ Template for Metaheuristics
 
-C++ Template of practices in the course Metaheuristics in the course of Computer Science degree at the University of Granada.
+--------------------------------------------------------------------------------
 
-This is a skeleton of the C++ for doing the practices, para 
+# Optimización Metaheurística: Problema de Agrupamiento con Restricciones (PAR)
 
-The main design criteria applied were: 
+Este repositorio contiene el desarrollo e implementación en **C++** de diferentes algoritmos metaheurísticos aplicados a la resolución del **Problema de Agrupamiento con Restricciones (PAR)**. 
 
-- To clearly separate the problem part from the algorithm 
-- To make easier to change the algorithm maintaining the same API, see the main code.
-- To identify the files parts to maintain fixed (in **/common** directory) for the files to be adapted.
-- To facilitate the creation of automatic tests.
+Este proyecto fue desarrollado como parte de la asignatura de *Metaheurísticas* del Grado en Ingeniería Informática de la Universidad de Granada (UGR).
 
-The C++ template for metaheuristics follows a clean, modular design with clear separation of concerns:
+## Descripción del Problema
+El PAR es una generalización del clásico problema de análisis de clústeres (*clustering*). El objetivo es encontrar una partición que agrupe un conjunto de instancias en *k* clústeres, minimizando la distancia media intra-clúster mientras se cumple un conjunto de restricciones de usuario.
 
-## Core Components
+Las restricciones a nivel de instancia son:
+* **Must-Link (ML):** Dos instancias dadas deben pertenecer forzosamente al mismo clúster.
+* **Cannot-Link (CL):** Dos instancias dadas no pueden pertenecer al mismo clúster.
 
-### 1. **Problem Interface (`Problem`)**
-Abstract base class defining the problem's API.
+Dado que encontrar una partición que satisfaga el 100% de las restricciones puede ser geométricamente imposible en altas densidades, el problema se modela utilizando **restricciones débiles** (*soft constraints*). Se optimiza una única función de *fitness* penalizada: `Fitness = Desviacion_General + (λ * Incumplimientos)`.
 
-*Example:* `ProblemIncrem` implements a binary problem where fitness = count of even-indexed 1s minus odd-indexed 1s.
+## Algoritmos Implementados
+El framework incluye el diseño y adaptación de tres enfoques de resolución:
 
-The `Problem` interface (abstract base class) defines these key methods:
+1. **Búsqueda Aleatoria (Random Search):** Algoritmo de exploración estocástica ciega que genera soluciones aleatorias factibles, utilizado como *baseline* comparativo.
+2. **Algoritmo Greedy (COPKM):** Enfoque constructivo determinista basado en una modificación del algoritmo *K-Medias* [4, 6]. Selecciona iterativamente la asignación que menor incremento de infactibilidad produce.
+3. **Búsqueda Local (BL):** Metaheurística basada en trayectorias que utiliza la estrategia del **Primer Mejor** (*First Improvement*). Emplea un vecindario dinámico generado mediante el cambio individual de clúster y un operador de reparación inteligente para la solución inicial.
 
-- `tFitness fitness(const tSolution &solution)`
-  → Computes fitness of a given solution.
-  *Example: In `ProblemIncrem`*, it Counts +1 for each `1` at even index, -1 for each `1` at odd index.
+## Estructura del Proyecto
+El código sigue una arquitectura fuertemente modular, separando la lógica del dominio del problema de los motores de optimización:
 
-- `tSolution createSolution()`
-  → Generates a random valid solution (it must fulfill all constraints).
-  *Example: In `ProblemIncrem`*, it returns a binary vector of given size, each bit randomly `true`/`false`.
+* `src/`: Implementación de la evaluación del fitness del PAR, cálculo de *infeasibility*, reparación de soluciones (`ppar.cpp`) y desarrollo de la heurística (`greedy.cpp`).
+* `inc/`: Ficheros de cabecera con las definiciones de clases (`ppar.h`, `localsearch.h`, `randomsearch.h`).
+* `common/`: Framework base de interfaces abstractas y utilidades genéricas de optimización (`mh.h`, `problem.h`, `random.hpp`).
+* Directorio Raíz: Contiene el orquestador `main.cpp`, archivos de configuración y *scripts* de automatización.
 
-- `size_t getSolutionSize()`
-  → Returns the fixed size of solutions (e.g., number of bits).
+## Compilación e Instalación
+El proyecto utiliza **CMake** para garantizar una compilación sencilla y sin errores en entornos Linux/Unix.
 
-- `std::pair<tDomain, tDomain> getSolutionDomainRange()`
-  → Returns domain bounds (min, max) for solution components.
-  *In `ProblemIncrem`*: Returns `(false, true)` — binary domain.
-  
-- `bool isValid(const tSolution<tDomain> &solution)`
-  → Checks if a solution meets all problem constraints.
-  *Example: In `ProblemIncrem`, always returns `true` as any binary vector is valid.*
+```bash
+# 1. Generar los archivos de construcción
+cmake .
 
-- `void fix(tSolution<tDomain> &solution)`
-  → Modifies an invalid solution to meet constraints.
-  *Example: In `ProblemIncrem`, no fixing is needed, so method may be left empty.*
-```
-All metaheuristics (`RandomSearch`, `GreedySearch`) rely on these methods to evaluate, generate, and explore solutions without knowing internal structure.
-
-### 2. **Metaheuristic Interface (`MH`)**
-
-The `MH` (Metaheuristic) interface defines a single abstract method:
-
-```cpp
-virtual ResultMH<tDomain> optimize(Problem<tDomain> &problem, int maxevals) = 0;
+# 2. Compilar el ejecutable
+make
 ```
 
-### Key Details:
-- **Template**: `MH<tDomain>` — generic over solution domain type (e.g., `int`, `bool`).
-- **Return Type**: `ResultMH<tDomain>` — a struct containing:
-  - Best solution found (`tSolution<tDomain>`)
-  - Its fitness value (`tFitness`)
-  - Number of evaluations performed (`int`)
-- **Parameters**:
-  - `problem`: Instance of `Problem<tDomain>` to optimize.
-  - `maxevals`: Maximum allowed fitness evaluations.
-
-### Implemented by:
-- `RandomSearch<tDomain>`: Generates random solutions, returns best.
-- `GreedySearch<tDomain>`: Builds solution incrementally using heuristic (e.g., `ProblemIncrem`).
-
-### Example Usage:
-```cpp
-ProblemInt p(10);
-GreedySearch gs;
-auto result = gs.optimize(p, 100); // Uses 1 eval (greedy), not 100
+## Uso del Programa
+El programa orquestador está completamente parametrizado por línea de comandos, no requiriendo recompilaciones entre ejecuciones.
+Sintaxis general:
+``` bash
+./main -d <datos.dat> -c <restricciones.const> -m <modo> [opciones]
 ```
 
-> **Note**: `GreedySearch::optimize` ignores `maxevals` in practice — it performs only *one* construction step, not `maxevals` evaluations. This is a design flaw unless intentional.
+Ejemplo de ejecución individual: Ejecutar la base de datos Zoo con un 30% de restricciones, buscando 7 clústeres, usando la Búsqueda Local con la semilla aleatoria 42:
 
-### 3. **Solution & Fitness Types**
-- `tSolution`: `vector<tOption>` (it can be anyone: `bool`, `int`, `double`, ...)
-- `tFitness`: `double` the type of the fitness function.
-
-### 4. **Result Structure (`ResultMH`)**
-Return type from `optimize()`: `{solution, fitness, evaluations}`
-
----
-
-## Example Implementations
-
-### Random Search (`RandomSearch`)
-```cpp
-ResultMH RandomSearch::optimize(Problem<tDomain> &p, int maxevals) {
-  tSolution<tDomain> best; float best_fit = -1;
-  for(int i=0; i<maxevals; i++) {
-    auto sol = p->createSolution(); // Random binary vector
-    auto fit = p->fitness(sol);
-    if(fit < best_fit || best_fit < 0) { best = sol; best_fit = fit; }
-  }
-  return {best, best_fit, maxevals};
-}
+``` bash
+./main -d zoo_set.dat -c zoo_set_const_30.dat -a LocalSearch -k 7 -s 42 -m i
 ```
 
-This algorithm is generic, because it could be applied without changes to different representations.
+Parámetros y Opciones:
 
-### Greedy Search (`GreedySearch`)
-```cpp
-using ProblemInt = Problem<int>;
-using ResultMHInt = ResultMH<int>;
+-m <modo>: Tipo de volcado de datos: i (individual), t (tabla LaTeX), c (formato CSV).
 
-ResultMHInt GreedySearch::optimize(ProblemInt &p, int maxevals) {
-  auto size = p.getSolutionSize();
-  vector<int> values(size); iota(values.begin(), values.end(), 0);
-  tSolution<int> sol(size, 0);
-  
-  for(int r = 0; r < size/2; r++) {
-    // Heuristic: prefer even indices
-    auto best_idx = min_element(heuristics.begin(), heuristics.end());
-    sol[values[best_idx]] = 1;
-    values.erase(values.begin() + best_idx);
-  }
-  return {sol, p->fitness(sol), 1}; // Only 1 evaluation
-}
-```
+-a <algoritmo>: RandomSearch, Greedy o LocalSearch.
 
-This algorithm is not generic, so it does not a template.
+-e <evals>: Límite del criterio de parada (por defecto: 100.000).
 
----
+-h: muestra toda la ayuda y opciones disponibles.
 
-## Design Benefits
+## Automatización de Experimentos
+Para agilizar la obtención de resultados sobre los distintos datasets (Zoo, Glass, Bupa), se proveen scripts en Bash que lanzan pruebas masivas:
 
-- ✅ **Swap algorithms easily**: Just change the `MH` instance in `main()`.
-- ✅ **Testable**: Each `Problem` and `MH` can be unit-tested independently.
-- ✅ **Extensible**: Add new problems (e.g., `TSPProblem`) or heuristics (e.g., `HillClimbing`) without breaking existing code.
-- ✅ **Fixed API**: `/common/` files remain untouched — only `/src/` and `/inc/` are modified.
+- `ejecucion_tablas.sh`: Ejecuta todos los algoritmos sobre las bases de datos al 15% y 30% de restricciones y exporta el código LaTeX directamente a la carpeta resultados_latex/.
+- `ejecutar_para_boxplot.sh`: Ejecuta múltiples semillas independientes en formato CSV para su posterior análisis estadístico y visualización de robustez.
 
-This design enables students to focus on algorithm logic, not boilerplate.
