@@ -4,8 +4,7 @@
 using namespace std;
 
 /**
- * Implementation of the Random Search metaheuristic
- *  - Randomly generates solutions and selects the best one
+ * Description of the Greedy Search metaheuristic
  *
  * @see MH
  * @see Problem
@@ -24,12 +23,7 @@ public:
 	virtual ~GreedySearch() {}
 	// Implement the MH interface methods
 	/**
-	 * Create random solutions until maxevals has been achieved, and returns the
-	 * best one.
-	 *
-	 * @param problem The problem to be optimized
-	 * @param maxevals Maximum number of evaluations allowed
-	 * @return A pair containing the best solution found and its fitness
+	 * Run the Greedy Search algorithm to find the optimal solution.
 	 */
 	virtual ResultMH<int> optimize(Problem<int> &problem, int maxevals);
 

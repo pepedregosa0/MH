@@ -1,3 +1,10 @@
+/*
+Archivo: greedy.cpp
+Autor: josepc
+Descripcion: Implementacion de la clase GreedySearch, que representa un 
+algoritmo constructivo para el problema
+*/
+
 #include <cassert>
 #include <greedy.h>
 #include <iostream>

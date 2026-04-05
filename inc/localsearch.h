@@ -1,3 +1,10 @@
+/*
+Archivo: localsearch.h
+Autor: josepc
+Descripcion: Implementacion de la clase LocalSearch, que representa un 
+algoritmo de busqueda local basado en el esquema de "Primer Mejor".
+*/
+
 #pragma once
 #include <mh.h>
 #include "random.hpp"

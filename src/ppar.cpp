@@ -1,3 +1,10 @@
+/*
+Archivo: ppar.cpp
+Autor: josepc
+Descripcion: Implementacion de la clase ProblemPar, que representa el problema 
+de clustering con restricciones PAR, hereda de Problem<int>
+*/
+
 #include "ppar.h"
 
 #include <math.h>
