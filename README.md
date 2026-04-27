@@ -52,14 +52,14 @@ Sintaxis general:
 Ejemplo de ejecución individual: Ejecutar la base de datos Zoo con un 30% de restricciones, buscando 7 clústeres, usando la Búsqueda Local con la semilla aleatoria 42:
 
 ``` bash
-./main -d zoo_set.dat -c zoo_set_const_30.dat -a LocalSearch -k 7 -s 42 -m i
+./main -d ./datos_PAR_curso2526/zoo_set.dat -c ./datos_PAR_curso2526/zoo_set_const_30.dat -a BL -k 7 -s 42 -m i
 ```
 
 Parámetros y Opciones:
 
 -m <modo>: Tipo de volcado de datos: i (individual), t (tabla LaTeX), c (formato CSV).
 
--a <algoritmo>: RandomSearch, Greedy o LocalSearch.
+-a <algoritmo>: Random, Greedy o BL.
 
 -e <evals>: Límite del criterio de parada (por defecto: 100.000).
 

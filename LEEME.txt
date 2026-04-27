@@ -77,14 +77,11 @@ Opciones extra:
   -e <evals>      Número de evaluaciones (por defecto: 100000)
   -h              Mostrar esta ayuda
 
-En los scripts se presupone que los datos se encuentran en el directorio
-'../datos_PAR_curso2526/' con los nombres especificados en el enunciado.
-
 [Ejemplo de Ejecución Manual]
 Para ejecutar el dataset de Zoo con 15% de restricciones, k=7, realizando 
 10 ejecuciones independientes con semilla base 42 y salida en tabla LaTeX:
 
-  ./main -d ../datos_PAR_curso2526/zoo_set.dat -c ../datos_PAR_curso2526/zoo_set_const_15.dat -k 7 -n 10 -s 42 -m t
+  ./main -d ./datos_PAR_curso2526/zoo_set.dat -c ./datos_PAR_curso2526/zoo_set_const_15.dat -k 7 -n 10 -s 42 -m t
 
 [Uso de Scripts Automáticos]
 Para mayor comodidad en la corrección, se han incluido scripts que lanzan de 
