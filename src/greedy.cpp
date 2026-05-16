@@ -15,12 +15,11 @@ using namespace std;
 using namespace Par;
 
 template <class T> void print_vector(string name, const vector<T> &sol) {
-  cout << name << ": ";
+	cout << name << ": ";
 
-  for (auto elem : sol) {
-	cout << elem << ", ";
-  }
-  cout << endl;
+	for (auto elem : sol)
+		cout << elem << ", ";
+	cout << endl;
 }
 
 std::vector<int> GreedySearch::GenerarRSI(int n) 

@@ -105,6 +105,11 @@ int main(int argc, char *argv[])
     AGE<int> age_un(CruceUniforme<int>);
     AGE<int> age_sf(CruceSegmentoFijo<int>);
 
+	// Configuracion algoritmos meméticos
+	AM_All<int> am_all(CruceSegmentoFijo<int>);
+    AM_Rand<int> am_rand(CruceSegmentoFijo<int>);
+    AM_Best<int> am_best(CruceSegmentoFijo<int>);
+
 
     map<string, MH<int>*> algoritmos = {
         make_pair("Random", &ralg),
@@ -113,7 +118,10 @@ int main(int argc, char *argv[])
 		make_pair("AGG-UN", &agg_un),
 		make_pair("AGG-SF", &agg_sf),
 		make_pair("AGE-UN", &age_un),
-		make_pair("AGE-SF", &age_sf)
+		make_pair("AGE-SF", &age_sf),
+		make_pair("AM-All", &am_all),
+        make_pair("AM-Rand", &am_rand),
+        make_pair("AM-Best", &am_best)
     };
 
 	if (modo == 'i') // Modo individual

@@ -1,7 +1,7 @@
 /*
 Archivo: genetic.h
 Autor: josepc
-Descripcion: Implementacion de la clase Genetic, que representa
+Descripcion: Implementacion de la clase GeneticAlgorithm, AGE, AGG, que representan
 algoritmos de busqueda genetica.
 */
 
@@ -17,8 +17,7 @@ template <typename tDomain>
 using CrossoverOp = void (*)(const vector<tDomain>&, const vector<tDomain>&, 
 							 vector<tDomain>&, vector<tDomain>&);
 
-template <typename tDomain>
-class GeneticAlgorithm : public MH<tDomain>
+template <typename tDomain> class GeneticAlgorithm : public MH<tDomain>
 {
 protected:
 	CrossoverOp<tDomain> cruce_op;
@@ -35,8 +34,7 @@ public:
 /////////////
 /// Clase AGG
 /////////////
-template <typename tDomain>
-class AGG : public GeneticAlgorithm<tDomain>
+template <typename tDomain> class AGG : public GeneticAlgorithm<tDomain>
 {
 private:
 	double prob_cruce = 0.8;
@@ -68,7 +66,8 @@ public:
 		}
 		
 		// Bucle evolutivo generacional
-		while (evaluaciones < maxevals) {
+		while (evaluaciones < maxevals)
+		{
 			vector<tSolution<tDomain>> nueva_poblacion(this->tam_poblacion);
 			vector<double> nuevo_fitness(this->tam_poblacion);
 			
@@ -80,9 +79,10 @@ public:
 				vector<tDomain> h1, h2;
 				
 				// cruce o copia
-				if (Random::get<double>(0.0, 1.0) < prob_cruce) {
-					this->cruce_op(poblacion[p1], poblacion[p2], h1, h2); 
-				} else {
+				if (Random::get<double>(0.0, 1.0) < prob_cruce)
+					this->cruce_op(poblacion[p1], poblacion[p2], h1, h2);
+				else
+				{
 					h1 = poblacion[p1];
 					h2 = poblacion[p2];
 				}
@@ -101,7 +101,8 @@ public:
 				evaluaciones++;
 				
 				// Evaluacion 2 (Comprobando límite de evaluaciones)
-				if (i + 1 < this->tam_poblacion && evaluaciones < maxevals) {
+				if (i + 1 < this->tam_poblacion && evaluaciones < maxevals)
+				{
 					nuevo_fitness[i+1] = problem.fitness(h2);
 					nueva_poblacion[i+1] = h2;
 					evaluaciones++;
@@ -142,8 +143,7 @@ public:
 /////////////
 /// Clase AGE
 //////////////
-template <typename tDomain>
-class AGE : public GeneticAlgorithm<tDomain>{
+template <typename tDomain> class AGE : public GeneticAlgorithm<tDomain>{
 private:
 	double prob_cruce = 1.0; // Siempre cruzamos en AGE
 public:
@@ -168,7 +168,8 @@ public:
 		}
 		
 		// Bucle evolutivo estacionario
-		while (evaluaciones < maxevals) {
+		while (evaluaciones < maxevals)
+		{
 			int p1 = SeleccionPorTorneo(fitness_pob, 3);
 			int p2 = SeleccionPorTorneo(fitness_pob, 3);
 			
