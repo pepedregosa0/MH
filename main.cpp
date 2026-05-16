@@ -99,11 +99,21 @@ int main(int argc, char *argv[])
     GreedySearch rgreedy;
     LocalSearch<int> rls;
 
+	// Configuracion algoritmos genéticos
+    AGG<int> agg_un(CruceUniforme<int>);
+    AGG<int> agg_sf(CruceSegmentoFijo<int>);
+    AGE<int> age_un(CruceUniforme<int>);
+    AGE<int> age_sf(CruceSegmentoFijo<int>);
+
 
     map<string, MH<int>*> algoritmos = {
         make_pair("Random", &ralg),
         make_pair("Greedy", &rgreedy),
-        make_pair("BL", &rls)
+        make_pair("BL", &rls),
+		make_pair("AGG-UN", &agg_un),
+		make_pair("AGG-SF", &agg_sf),
+		make_pair("AGE-UN", &age_un),
+		make_pair("AGE-SF", &age_sf)
     };
 
 	if (modo == 'i') // Modo individual
@@ -111,17 +121,20 @@ int main(int argc, char *argv[])
 		if (algoritmo.empty() || algoritmos.find(algoritmo) == algoritmos.end())
 		{
 			cerr << "Error: En modo individual, debe especificar un algoritmo valido con -a.\n";
-			cout << "Algoritmos disponibles: Random, Greedy, BL\n";
+			cout << "Algoritmos disponibles: Random, Greedy, BL, AGG-UN, AGG-SF, AGE-UN, AGE-SF\n";
 			return 1;
 		}
 		cout << "Ejecutando " << algoritmo << "...\n";
+
 		auto mh = algoritmos[algoritmo];
 		ResultMH<int> result = mh->optimize(*problem, num_evaluaciones);
+		double infeasibility = (double) problema.CalcularInfeasibility(result.solution) / problema.NumeroRestricciones();
+		
 		cout << "Mejor solucion: " << result.solution << endl;
 		cout << "Mejor fitness: " << result.fitness << endl;
 		cout << "Evaluationes: " << result.evaluations << endl;
 		cout << "Desviacion: " << problema.CalcularDesviacion(result.solution) << endl;
-		cout << "Infeasibility: " << problema.CalcularInfeasibility(result.solution) << endl;
+		cout << "Infeasibility: " << infeasibility << endl;
 	}
 	else if (modo == 'c') // Modo CSV para boxplot
 	{
@@ -196,7 +209,7 @@ int main(int argc, char *argv[])
 			media_incumplimientos /= problema.NumeroRestricciones();
 
 			// Printf porque resulta mas facil para formatear la tabla con alineacion decimal
-            printf("%s & %.3f & %.3f & %.3f & %.0f & %.4f \\\\\n", 
+            printf("%s & %.3f & %.3f & %.3f%% & %.0f & %.4f \\\\\n", 
                    nombre.c_str(),
 				   media_fitness,
 				   media_distancia,
