@@ -9,14 +9,6 @@ algoritmos de busqueda genetica.
 #include <mh.h>
 #include "random.hpp"
 #include <vector>
-#include <utility>
-#include <algorithm> // Para swap
-
-using namespace std;
-
-#pragma once
-#include "mh.h"
-#include <vector>
 
 using namespace std;
 
@@ -25,7 +17,8 @@ using CrossoverOp = void (*)(const vector<tDomain>&, const vector<tDomain>&,
 							 vector<tDomain>&, vector<tDomain>&);
 
 template <typename tDomain>
-class GeneticAlgorithm : public MH<tDomain> {
+class GeneticAlgorithm : public MH<tDomain>
+{
 protected:
 	CrossoverOp<tDomain> cruce_op;
 	int tam_poblacion = 50;
@@ -42,7 +35,8 @@ public:
 /// Clase AGG
 /////////////
 template <typename tDomain>
-class AGG : public GeneticAlgorithm<tDomain> {
+class AGG : public GeneticAlgorithm<tDomain>
+{
 public:
 	AGG(CrossoverOp<tDomain> cruce) : GeneticAlgorithm<tDomain>(cruce) {}
 	virtual ResultMH<tDomain> optimize(Problem<tDomain> &problem, int maxevals) override;
@@ -53,7 +47,7 @@ public:
 /// Clase AGE
 //////////////
 template <typename tDomain>
-class AGE : public GeneticAlgorithm<tDomain> {
+class AGE : public GeneticAlgorithm<tDomain>{
 public:
 	AGE(CrossoverOp<tDomain> cruce) : GeneticAlgorithm<tDomain>(cruce) {}
 	virtual ResultMH<tDomain> optimize(Problem<tDomain> &problem, int maxevals) override;

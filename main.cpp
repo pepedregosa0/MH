@@ -99,6 +99,7 @@ int main(int argc, char *argv[])
     GreedySearch rgreedy;
     LocalSearch<int> rls;
 
+
     map<string, MH<int>*> algoritmos = {
         make_pair("Random", &ralg),
         make_pair("Greedy", &rgreedy),

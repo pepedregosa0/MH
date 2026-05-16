@@ -63,8 +63,9 @@ ResultMH<tDomain> AGG<tDomain>::optimize(Problem<tDomain> &problem, int maxevals
 				h2 = poblacion[p2];
 			}
 			
-			MutacionUniforme(h1, prob_mutacion, min_val, max_val);
-			MutacionUniforme(h2, prob_mutacion, min_val, max_val);
+			// mutacion
+			MutacionUniforme(h1, prob_mutacion, max_val + 1);
+			MutacionUniforme(h2, prob_mutacion, max_val + 1);
 			
 			// Evitar soluciones no válidas
 			problem.fix(h1);
@@ -153,8 +154,8 @@ ResultMH<tDomain> AGE<tDomain>::optimize(Problem<tDomain> &problem, int maxevals
 		}
 		
 		// Mutacion
-		MutacionUniforme(h1, prob_mutacion, min_val, max_val);
-		MutacionUniforme(h2, prob_mutacion, min_val, max_val);
+		MutacionUniforme(h1, prob_mutacion, max_val + 1);
+		MutacionUniforme(h2, prob_mutacion, max_val + 1);
 		
 		// Evitar soluciones no válidas
 		problem.fix(h1);
@@ -174,44 +175,62 @@ ResultMH<tDomain> AGE<tDomain>::optimize(Problem<tDomain> &problem, int maxevals
 		else
 			break;
 		
-		// 3. REEMPLAZO: Buscamos a los 2 PEORES individuos de toda la población
+		// Buscamos a los 2 peores individuos de toda la población para reemplazarlos
 		int peor1 = 0, peor2 = 1;
-		if (fitness_pob[1] > fitness_pob) {
+		if (fitness_pob[1] > fitness_pob[0])
+		{
 			peor1 = 1;
 			peor2 = 0;
 		}
 		
-		for (int i = 2; i < tam_poblacion; i++) {
-			if (fitness_pob[i] > fitness_pob[peor1]) {
+		for (int i = 2; i < tam_poblacion; i++)
+		{
+			if (fitness_pob[i] > fitness_pob[peor1])
+			{
 				peor2 = peor1;
 				peor1 = i;
-			} else if (fitness_pob[i] > fitness_pob[peor2]) {
-				peor2 = i;
 			}
+			else if (fitness_pob[i] > fitness_pob[peor2])
+				peor2 = i;
 		}
 		
-		// El guion y la teoría marcan que los 2 hijos sustituyen a los 2 peores (competición)
-		// Solo los insertamos si superan o igualan a los peores para no involucionar.
-		if (fit1 < fitness_pob[peor1]) {
-			poblacion[peor1] = h1;
-			fitness_pob[peor1] = fit1;
+		// El mejor de los hijos compite contra el peor absoluto (peor1).
+		// El peor de los hijos compite contra el segundo peor (peor2).
+		if (fit1 < fit2)
+		{ 
+			// El Hijo 1 es el mejor de los dos
+			if (fit1 < fitness_pob[peor1])
+			{
+				poblacion[peor1] = h1;
+				fitness_pob[peor1] = fit1;
+			}
+			if (fit2 < fitness_pob[peor2])
+			{
+				poblacion[peor2] = h2;
+				fitness_pob[peor2] = fit2;
+			}
 		}
-		if (fit2 < fitness_pob[peor2]) {
-			// Evaluamos de nuevo porque peor2 podría haberse convertido en el peor global
-			int nuevo_peor = (fitness_pob[peor1] > fitness_pob[peor2]) ? peor1 : peor2;
-			if (fit2 < fitness_pob[nuevo_peor]) {
-				poblacion[nuevo_peor] = h2;
-				fitness_pob[nuevo_peor] = fit2;
+		else
+		{ 
+			// El Hijo 2 es el mejor de los dos (o son iguales)
+			if (fit2 < fitness_pob[peor1])
+			{
+				poblacion[peor1] = h2;
+				fitness_pob[peor1] = fit2;
+			}
+			if (fit1 < fitness_pob[peor2])
+			{
+				poblacion[peor2] = h1;
+				fitness_pob[peor2] = fit1;
 			}
 		}
 	}
-	
 	// Al final del bucle, buscamos el mejor absoluto de la población para devolverlo
 	int best_idx = 0;
-	for (int i = 1; i < tam_poblacion; i++) {
-		if (fitness_pob[i] < fitness_pob[best_idx]) {
+	for (int i = 1; i < tam_poblacion; i++)
+	{
+		if (fitness_pob[i] < fitness_pob[best_idx])
 			best_idx = i;
-		}
 	}
 	
 	return ResultMH<tDomain>(poblacion[best_idx], fitness_pob[best_idx], evaluaciones);
