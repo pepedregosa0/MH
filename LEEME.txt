@@ -1,5 +1,5 @@
 ===============================================================================
-PRÁCTICA 1: TÉCNICAS DE BÚSQUEDA DE POBLACIONES PARA EL PAR
+PRÁCTICA 2: TÉCNICAS DE BÚSQUEDA DE POBLACIONES PARA EL PAR
 ===============================================================================
 Autor: José Pedregosa García
 Asignatura: Metaheurísticas (Curso 2025-26)
@@ -19,6 +19,7 @@ Directorio Raíz:
   - ejecutar_para_boxplot.sh: Script de Bash para ejecutar los datasets y 
     exportar los resultados individuales en formato CSV para generar boxplots.
   - clean.sh: Script auxiliar para limpiar los ficheros de compilación.
+  - generar_boxplots.py: Script de Python para generar los boxplots a partir de los CSV.
 
 Directorio 'common/' (Framework base del profesor - SIN MODIFICAR):
   - mh.h / mhtrayectory.h: Interfaces base para las metaheurísticas.
@@ -34,6 +35,9 @@ Directorio 'inc/' (Ficheros de cabecera):
   - localsearch.h: Cabecera y desarrollo del algoritmo de Búsqueda Local.
   - randomsearch.h: Cabecera y desarrollo de la Metaheurística Aleatoria.
   - pincrem.h: Problema del portfolio (Original del framework, sin modificar).
+  - operadores.h: Operadores universales (Cruce Uniforme, Cruce Segmento Fijo, Mutación, Torneo).
+  - genetic.h: Algoritmo Genético Generacional (AGG) y Estacionario (AGE).
+  - memetic.h: Algoritmos Meméticos (AM-All, AM-Rand, AM-Best) e implementación de la BLS (Búsqueda Local Suave) optimizada.
 
 Directorio 'src/' (Ficheros de código fuente):
   - ppar.cpp: Implementación de la evaluación del fitness, desviación general, 
@@ -71,7 +75,10 @@ Argumentos obligatorios:
 Opciones extra:
   -s <semilla>    Semilla aleatoria (por defecto: 42)
   -a <algoritmo>  Nombre del algoritmo (obligatorio en modo 'i')
-                  Algoritmos disponibles: Random, Greedy, BL
+    Algoritmos disponibles:
+            Random, Greedy, BL,
+            AGG-UN, AGG-SF, AGE-UN, AGE-SF,
+            AM-All, AM-Rand, AM-Best
   -n <ejecs>      Número de ejecuciones (para modo 'c', por defecto: 10)
   -k <clusters>   Número de clusters (por defecto: 7)
   -e <evals>      Número de evaluaciones (por defecto: 100000)
@@ -82,6 +89,10 @@ Para ejecutar el dataset de Zoo con 15% de restricciones, k=7, realizando
 10 ejecuciones independientes con semilla base 42 y salida en tabla LaTeX:
 
   ./main -d ./datos_PAR_curso2526/zoo_set.dat -c ./datos_PAR_curso2526/zoo_set_const_15.dat -k 7 -n 10 -s 42 -m t
+
+Para ejecutar el dataset de Bupa con 30% de restricciones, k=16, una única ejecución de Greedy:
+
+  ./main -d ./datos_PAR_curso2526/bupa_set.dat -c ./datos_PAR_curso2526/bupa_set_const_30.dat -k 16 -n 1 -s 42 -m i -a Greedy
 
 [Uso de Scripts Automáticos]
 Para mayor comodidad en la corrección, se han incluido scripts que lanzan de 
@@ -101,4 +112,6 @@ Idem para generar los CSV individuales para boxplots:
   ./ejecutar_para_boxplot.sh
 
 Generará una carpeta 'resultados_csv' con los CSV de cada ejecución para cada dataset.
+Además, ejecutará un script de Python para generar los boxplots a partir de esos CSV
+en la carpeta 'graficas_generadas'.
 -------------------------------------------------------------------------------

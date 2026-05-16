@@ -46,7 +46,10 @@ void print_use()
     cout << "Opciones extra:\n";
     cout << "  -s <semilla>    Semilla aleatoria (por defecto: 42)\n";
     cout << "  -a <algoritmo>  Nombre del algoritmo (obligatorio en modo 'i')\n";
-	cout << "                  Algoritmos disponibles: Random, Greedy, BL\n";
+	cout << "\tAlgoritmos disponibles:\n";
+	cout << "\tRandom, Greedy, BL,\n";
+	cout << "\tAGG-UN, AGG-SF, AGE-UN, AGE-SF,\n";
+	cout << "\tAM-All, AM-Rand, AM-Best\n";
     cout << "  -n <ejecs>      Número de ejecuciones (para modo 'c', por defecto: 10)\n";
 	cout << "  -k <clusters>   Número de clusters (por defecto: 7)\n";
 	cout << "  -e <evals>      Número de evaluaciones (por defecto: 100000)\n";
@@ -129,7 +132,10 @@ int main(int argc, char *argv[])
 		if (algoritmo.empty() || algoritmos.find(algoritmo) == algoritmos.end())
 		{
 			cerr << "Error: En modo individual, debe especificar un algoritmo valido con -a.\n";
-			cout << "Algoritmos disponibles: Random, Greedy, BL, AGG-UN, AGG-SF, AGE-UN, AGE-SF\n";
+			cout << "Algoritmos disponibles:\n";
+			cout << "\tRandom, Greedy, BL,\n";
+			cout << "\tAGG-UN, AGG-SF, AGE-UN, AGE-SF,\n";
+			cout << "\tAM-All, AM-Rand, AM-Best\n";
 			return 1;
 		}
 		cout << "Ejecutando " << algoritmo << "...\n";

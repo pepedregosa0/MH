@@ -22,12 +22,22 @@ El framework incluye el diseño y adaptación de tres enfoques de resolución:
 1. **Búsqueda Aleatoria (Random Search):** Algoritmo de exploración estocástica ciega que genera soluciones aleatorias factibles, utilizado como *baseline* comparativo.
 2. **Algoritmo Greedy (COPKM):** Enfoque constructivo determinista basado en una modificación del algoritmo *K-Medias*. Selecciona iterativamente la asignación que menor incremento de infactibilidad produce.
 3. **Búsqueda Local (BL):** Metaheurística basada en trayectorias que utiliza la estrategia del **Primer Mejor** (*First Improvement*). Emplea un vecindario dinámico generado mediante el cambio individual de clúster y un operador de reparación inteligente para la solución inicial.
+4. **Algoritmos Genéticos (AGG y AGE):** Implementación de un algoritmo genético generacional (AGG) y un algoritmo genético estacionario (AGE) con operadores de selección por torneo, cruce uniforme y mutación adaptativa.
+5. **Algoritmos Meméticos (AM):** Extensión de los algoritmos genéticos con la incorporación de una fase de búsqueda local intensiva sobre los mejores individuos de cada generación.
+Variantes de cada algoritmo:
+- AGG-UN: AGG con selección por torneo, cruce uniforme y mutación
+- AGG-SF: AGG con selección por torneo, cruce de un punto y mutación
+- AGE-UN: AGE con selección por torneo, cruce uniforme y mutación
+- AGE-SF: AGE con selección por torneo, cruce de un punto y mutación
+- AM-All: Memético con búsqueda local sobre toda la población
+- AM-Rand: Memético con búsqueda local sobre individuos seleccionados aleatoriamente
+- AM-Best: Memético con búsqueda local solo sobre el mejor individuo de cada generación
 
 ## Estructura del Proyecto
 El código sigue una arquitectura fuertemente modular, separando la lógica del dominio del problema de los motores de optimización:
 
 * `src/`: Implementación de la evaluación del fitness del PAR, cálculo de *infeasibility*, reparación de soluciones (`ppar.cpp`) y desarrollo de la heurística (`greedy.cpp`).
-* `inc/`: Ficheros de cabecera con las definiciones de clases (`ppar.h`, `localsearch.h`, `randomsearch.h`).
+* `inc/`: Ficheros de cabecera con las definiciones de clases (`ppar.h`, `localsearch.h`, `randomsearch.h`, `genetic.h`, `memetic.h`, `operadores.h`).
 * `common/`: Framework base de interfaces abstractas y utilidades genéricas de optimización (`mh.h`, `problem.h`, `random.hpp`).
 * Directorio Raíz: Contiene el orquestador `main.cpp`, archivos de configuración y *scripts* de automatización.
 
@@ -49,25 +59,35 @@ Sintaxis general:
 ./main -d <datos.dat> -c <restricciones.const> -m <modo> [opciones]
 ```
 
-Ejemplo de ejecución individual: Ejecutar la base de datos Zoo con un 30% de restricciones, buscando 7 clústeres, usando la Búsqueda Local con la semilla aleatoria 42:
+Ejemplo de ejecución individual: Ejecutar la base de datos Bupa con un 30% de restricciones, buscando 16 clústeres, usando Greedy con la semilla aleatoria 42:
 
 ``` bash
-./main -d ./datos_PAR_curso2526/zoo_set.dat -c ./datos_PAR_curso2526/zoo_set_const_30.dat -a BL -k 7 -s 42 -m i
+  ./main -d ./datos_PAR_curso2526/bupa_set.dat -c ./datos_PAR_curso2526/bupa_set_const_30.dat -k 16 -n 1 -s 42 -m i -a Greedy
+
 ```
 
 Parámetros y Opciones:
+Argumentos obligatorios:
+  -d <archivo>    Ruta al archivo de datos (.dat)
+  -c <archivo>    Ruta al archivo de restricciones (_const.dat)
+  -m <modo>       Modo de ejecución: 'i' (individual), 't' (tabla), 'c' (csv)
 
--m <modo>: Tipo de volcado de datos: i (individual), t (tabla LaTeX), c (formato CSV).
+Opciones extra:
+  -s <semilla>    Semilla aleatoria (por defecto: 42)
+  -a <algoritmo>  Nombre del algoritmo (obligatorio en modo 'i')
+    Algoritmos disponibles:
+            Random, Greedy, BL,
+            AGG-UN, AGG-SF, AGE-UN, AGE-SF,
+            AM-All, AM-Rand, AM-Best
+  -n <ejecs>      Número de ejecuciones (para modo 'c', por defecto: 10)
+  -k <clusters>   Número de clusters (por defecto: 7)
+  -e <evals>      Número de evaluaciones (por defecto: 100000)
+  -h              Mostrar esta ayuda
 
--a <algoritmo>: Random, Greedy o BL.
-
--e <evals>: Límite del criterio de parada (por defecto: 100.000).
-
--h: muestra toda la ayuda y opciones disponibles.
 
 ## Automatización de Experimentos
 Para agilizar la obtención de resultados sobre los distintos datasets (Zoo, Glass, Bupa), se proveen scripts en Bash que lanzan pruebas masivas:
 
 - `ejecucion_tablas.sh`: Ejecuta todos los algoritmos sobre las bases de datos al 15% y 30% de restricciones y exporta el código LaTeX directamente a la carpeta resultados_latex/.
-- `ejecutar_para_boxplot.sh`: Ejecuta múltiples semillas independientes en formato CSV para su posterior análisis estadístico y visualización de robustez.
+- `ejecutar_para_boxplot.sh`: Ejecuta múltiples semillas independientes en formato CSV para su posterior análisis estadístico y visualización de robustez, además de generar automáticamente los boxplots a partir de esos CSV en la carpeta 'graficas_generadas'.
 
