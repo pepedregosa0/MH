@@ -107,20 +107,20 @@ int ProblemPar::CargarRestricciones(std::string ruta_restricciones)
 double ProblemPar::CalcularDistanciaIntraCluster(int cluster, const std::vector<double> &centroide, const tSolution<int> &solucion)
 {
 	double dist_total = 0.0;
-    int tam = 0;
+	int tam = 0;
 	
-    // Sumar las distancias de las instancias que pertenecen a este cluster
-    for (size_t i = 0; i < num_instancias; i++) 
-    {
+	// Sumar las distancias de las instancias que pertenecen a este cluster
+	for (size_t i = 0; i < num_instancias; i++) 
+	{
 		if (solucion[i] == cluster) 
-        {
+		{
 			dist_total += Distancia(instancias[i], centroide);
-            tam++;
-        }
-    }
-    // Devolver la media
-    if (tam > 0) return dist_total / tam;
-    return 0.0;
+			tam++;
+		}
+	}
+	// Devolver la media
+	if (tam > 0) return dist_total / tam;
+	return 0.0;
 }
 
 ////////////////////
@@ -143,11 +143,11 @@ ProblemPar::ProblemPar(size_t num_clusters, std::string ruta_instancias, std::st
 void ProblemPar::printInfo()
 {
 	std::cout << "--- INFO DEL PROBLEMA PAR ---" << std::endl;
-    std::cout << "Numero de instancias (n): " << num_instancias << std::endl;
-    std::cout << "Numero de clusters (k): " << num_clusters << std::endl;
-    std::cout << "Total de restricciones en lista |R|: " << l_restricciones.size() << std::endl;
-    std::cout << "Valor de Lambda calculado: " << lambda << std::endl;
-    std::cout << "-----------------------------" << std::endl;
+	std::cout << "Numero de instancias (n): " << num_instancias << std::endl;
+	std::cout << "Numero de clusters (k): " << num_clusters << std::endl;
+	std::cout << "Total de restricciones en lista |R|: " << l_restricciones.size() << std::endl;
+	std::cout << "Valor de Lambda calculado: " << lambda << std::endl;
+	std::cout << "-----------------------------" << std::endl;
 }
 
 tFitness ProblemPar::fitness(const tSolution<int> &solucion)
@@ -174,54 +174,54 @@ tSolution<int> ProblemPar::createSolution()
 bool ProblemPar::isValid(const tSolution<int> &solution) 
 { 
 	// Creamos un vector de contadores inicializado a 0 para cada cluster
-    std::vector<int> tam_cluster(this->num_clusters, 0);
+	std::vector<int> tam_cluster(this->num_clusters, 0);
 	
-    // Contamos cuantas instancias tiene cada cluster en esta solucion
-    for (size_t i = 0; i < this->num_instancias; i++)
+	// Contamos cuantas instancias tiene cada cluster en esta solucion
+	for (size_t i = 0; i < this->num_instancias; i++)
 		tam_cluster[solution[i]]++;
 	
-    // Comprobamos si algun cluster se ha quedado vacio
-    for (size_t c = 0; c < this->num_clusters; c++) 
-    {
+	// Comprobamos si algun cluster se ha quedado vacio
+	for (size_t c = 0; c < this->num_clusters; c++) 
+	{
 		if (tam_cluster[c] == 0) 
 			return false;
-    }
+	}
 	
-    return true; // Todos los clusteres tienen al menos 1 instancia
+	return true; // Todos los clusteres tienen al menos 1 instancia
 }
 
 void ProblemPar::fix(tSolution<int> &solution) 
 {
 	std::vector<int> tam_cluster(this->num_clusters, 0);
 	
-    // Contar cuantas instancias tiene cada cluster actualmente
-    for (size_t i = 0; i < this->num_instancias; i++) 
+	// Contar cuantas instancias tiene cada cluster actualmente
+	for (size_t i = 0; i < this->num_instancias; i++) 
 		tam_cluster[solution[i]]++;
 	
-    // Comprobar si algun grupo se ha quedado vacio
-    for (size_t c = 0; c < this->num_clusters; c++) 
-    {
+	// Comprobar si algun grupo se ha quedado vacio
+	for (size_t c = 0; c < this->num_clusters; c++) 
+	{
 		if (tam_cluster[c] == 0) 
-        {
+		{
 			// Buscar un cluster tenga mas de 1 instancia
-            int cluster_donante = -1;
-            do {
+			int cluster_donante = -1;
+			do {
 				cluster_donante = Random::get<int>(0, this->num_clusters - 1);
-            } while (tam_cluster[cluster_donante] <= 1);
+			} while (tam_cluster[cluster_donante] <= 1);
 			
-            // Robar su primera instancia y asignarla al cluster vacio 'c'
-            for (size_t i = 0; i < this->num_instancias; i++) 
-            {
+			// Robar su primera instancia y asignarla al cluster vacio 'c'
+			for (size_t i = 0; i < this->num_instancias; i++) 
+			{
 				if (solution[i] == cluster_donante) 
-                {
+				{
 					solution[i] = c;
-                    tam_cluster[cluster_donante]--;
-                    tam_cluster[c]++;
-                    break; // siguiente cluster vacio
-                }
-            }
-        }
-    }
+					tam_cluster[cluster_donante]--;
+					tam_cluster[c]++;
+					break; // siguiente cluster vacio
+				}
+			}
+		}
+	}
 }
 
 // Solo para greedy
@@ -229,19 +229,19 @@ int ProblemPar::IncrementoInfeasibility(int instancia_i, int cluster_c, const tS
 {
 	int penalizacion = 0;
 	
-    // Recorremos las relaciones de la instancia_i con todas las demás instancias j
-    for (size_t j = 0; j < num_instancias; j++)
-    {
+	// Recorremos las relaciones de la instancia_i con todas las demás instancias j
+	for (size_t j = 0; j < num_instancias; j++)
+	{
 		// Solo evaluamos si j es diferente de i y si j ya tiene asignado un cluster en la solucion actual
-        if (instancia_i != j && solucion_actual[j] != -1)
-        {
+		if (instancia_i != j && solucion_actual[j] != -1)
+		{
 			int tipo_restriccion = m_restricciones[instancia_i][j]; 
 			
-            if (tipo_restriccion == 1 && cluster_c != solucion_actual[j]) // Must-Link
+			if (tipo_restriccion == 1 && cluster_c != solucion_actual[j]) // Must-Link
 			penalizacion++;
-            else if (tipo_restriccion == -1 && cluster_c == solucion_actual[j]) // Cannot-Link
+			else if (tipo_restriccion == -1 && cluster_c == solucion_actual[j]) // Cannot-Link
 			penalizacion++;
-        }
+		}
 	}
 	return penalizacion;
 }
@@ -249,26 +249,26 @@ int ProblemPar::IncrementoInfeasibility(int instancia_i, int cluster_c, const tS
 std::vector<std::vector<double>> ProblemPar::GenerarCentroidesAleatorios()
 {
 	size_t num_caracteristicas = instancias.size();
-    std::vector<std::vector<double>> centroides_iniciales(num_clusters, std::vector<double>(num_caracteristicas));
+	std::vector<std::vector<double>> centroides_iniciales(num_clusters, std::vector<double>(num_caracteristicas));
 	
-    // Para cada dimensión (característica), buscamos su min y max
-    for (size_t j = 0; j < num_caracteristicas; j++) 
-    {
+	// Para cada dimensión (característica), buscamos su min y max
+	for (size_t j = 0; j < num_caracteristicas; j++) 
+	{
 		double min_val = instancias[0][j];
-        double max_val = instancias[0][j];
+		double max_val = instancias[0][j];
 		
-        for (size_t i = 1; i < num_instancias; i++) 
-        {
+		for (size_t i = 1; i < num_instancias; i++) 
+		{
 			if (instancias[i][j] < min_val) min_val = instancias[i][j];
-            if (instancias[i][j] > max_val) max_val = instancias[i][j];
-        }
+			if (instancias[i][j] > max_val) max_val = instancias[i][j];
+		}
 		
-        // Generamos el valor aleatorio para esta dimensión en los k centroides
-        for (size_t c = 0; c < num_clusters; c++) 
+		// Generamos el valor aleatorio para esta dimensión en los k centroides
+		for (size_t c = 0; c < num_clusters; c++) 
 		centroides_iniciales[c][j] = Random::get<double>(min_val, max_val);
-    }
+	}
 	
-    return centroides_iniciales;
+	return centroides_iniciales;
 }
 
 std::vector<std::vector<double>> &ProblemPar::getInstancias()
@@ -347,4 +347,9 @@ double ProblemPar::CalcularDesviacion(const tSolution<int> &solucion)
 	for (size_t c = 0; c < num_clusters; c++)
 		desviacion += CalcularDistanciaIntraCluster(c, centroides[c], solucion);
 	return desviacion / num_clusters;
+}
+
+size_t ProblemPar::NumeroRestricciones() const
+{ 
+	return l_restricciones.size();
 }

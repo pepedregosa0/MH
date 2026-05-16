@@ -26,22 +26,22 @@ public:
    * @return A pair containing the best solution found and its fitness
    */
   ResultMH<tDomain> optimize(Problem<tDomain> &problem, int maxevals) override {
-    assert(maxevals > 0);
-    tSolution<tDomain> best;
-    tFitness best_fitness = -1;
+	assert(maxevals > 0);
+	tSolution<tDomain> best;
+	tFitness best_fitness = -1;
 
-    for (int i = 0; i < maxevals; i++) 
-    {
-      auto solution = problem.createSolution();
-      tFitness fitness = problem.fitness(solution);
+	for (int i = 0; i < maxevals; i++) 
+	{
+		auto solution = problem.createSolution();
+		tFitness fitness = problem.fitness(solution);
 
-      if (fitness < best_fitness || best_fitness < 0) 
-      {
-        best = solution;
-        best_fitness = fitness;
-      }
-    }
+		if (fitness < best_fitness || best_fitness < 0) 
+		{
+			best = solution;
+			best_fitness = fitness;
+		}
+	}
 
-    return ResultMH(best, best_fitness, maxevals);
+	return ResultMH(best, best_fitness, maxevals);
   }
 };

@@ -43,7 +43,7 @@ private:
 	//////////////////////////////
 	int CargarRestricciones(std::string ruta_restricciones);
 
-    double CalcularDistanciaIntraCluster(int cluster, const std::vector<double> &centroide, const tSolution<int> &solucion);
+	double CalcularDistanciaIntraCluster(int cluster, const std::vector<double> &centroide, const tSolution<int> &solucion);
 	
 	
 public:
@@ -84,6 +84,11 @@ public:
 	void CalcularLambda();
 	int CalcularInfeasibility(const tSolution<int> &solucion);
 	double CalcularDesviacion(const tSolution<int> &solucion);
+
+	////////////////////////////////////////////////////
+	/// Getters para el numero de restricciones y clusters
+	////////////////////////////////////////////////////
+	size_t NumeroRestricciones() const;
 
 };
 	

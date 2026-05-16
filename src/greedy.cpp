@@ -18,24 +18,24 @@ template <class T> void print_vector(string name, const vector<T> &sol) {
   cout << name << ": ";
 
   for (auto elem : sol) {
-    cout << elem << ", ";
+	cout << elem << ", ";
   }
   cout << endl;
 }
 
 std::vector<int> GreedySearch::GenerarRSI(int n) 
 {
-    std::vector<int> RSI(n);
-    for (int i = 0; i < n; i++)
-        RSI[i] = i;
-    
-    // Barajado de Fisher-Yates
-    for (int i = n - 1; i > 0; i--)
+	std::vector<int> RSI(n);
+	for (int i = 0; i < n; i++)
+		RSI[i] = i;
+	
+	// Barajado de Fisher-Yates
+	for (int i = n - 1; i > 0; i--)
 	{
-        int j = Random::get<int>(0, i);
-        std::swap(RSI[i], RSI[j]);
-    }
-    return RSI;
+		int j = Random::get<int>(0, i);
+		std::swap(RSI[i], RSI[j]);
+	}
+	return RSI;
 }
 
 ResultMHInt GreedySearch::optimize(ProblemInt &problem, int maxevals) 

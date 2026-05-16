@@ -22,6 +22,8 @@ Descripcion: Main para ejecutar los algoritmos de MH y obtener tablas de resulta
 #include "greedy.h"
 #include "randomsearch.h"
 #include "localsearch.h"
+#include "genetic.h"
+#include "memetic.h"
 
 using namespace std;
 template <typename S>
@@ -188,6 +190,9 @@ int main(int argc, char *argv[])
 			media_incumplimientos /= n_ejecuciones;
 			media_evaluaciones /= n_ejecuciones;
 			media_tiempo /= n_ejecuciones;
+
+			// Pasar inclumplimientos a porcentaje
+			media_incumplimientos /= problema.NumeroRestricciones();
 
 			// Printf porque resulta mas facil para formatear la tabla con alineacion decimal
             printf("%s & %.3f & %.3f & %.3f & %.0f & %.4f \\\\\n", 

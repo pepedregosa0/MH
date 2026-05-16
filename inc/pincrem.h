@@ -10,38 +10,34 @@ public:
   virtual size_t getSolutionSize() override { return size; }
   virtual std::pair<int, int> getSolutionDomainRange() override 
   {
-    return std::make_pair(false, true);
+	return std::make_pair(false, true);
   }
 
   tFitness fitness(const tSolution<int> &solution) override 
   {
-    tFitness count = 0;
+	tFitness count = 0;
 
-    for (int i = 0; i < solution.size(); i++) 
-    {
-      if (solution[i]) 
-      {
-        if (i % 2 == 0) 
-        {
-          count += 1;
-        } 
-        else 
-        {
-          count -= 1;
-        }
-      }
-    }
-    return count;
+	for (int i = 0; i < solution.size(); i++) 
+	{
+		if (solution[i]) 
+		{
+			if (i % 2 == 0) 
+				count += 1;
+			else
+				count -= 1;
+		}
+	}
+	return count;
   }
 
   tSolution<int> createSolution() override 
   {
-    tSolution<int> solution(size);
-    for (int i = 0; i < solution.size(); i++) 
-    {
-      solution[i] = Random::get<bool>();
-    }
-    return solution;
+	tSolution<int> solution(size);
+	for (int i = 0; i < solution.size(); i++) 
+	{
+	  solution[i] = Random::get<bool>();
+	}
+	return solution;
   }
 
   virtual bool isValid(const tSolution<int> &solution) override { return true; }
