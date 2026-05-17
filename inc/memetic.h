@@ -29,7 +29,8 @@ void BLS(tSolution<tDomain>& solucion, double& mejor_fitness, Problem<tDomain>& 
 		 int& evaluaciones, int maxevals_global)
 {
 	int N = solucion.size();
-	int epsilon = max(1, (int)(0.1 * N)); // Tolerancia máxima a fallos
+    // Se utiliza max para garantizar que epsilon sea al menos 1 (por si el 10% de N es menor que 1, lo cual no tendría sentido)
+	int epsilon = max(1, (int)(0.1 * N));
 	int fallos = 0;
 	int i = 0;
 	int maxevals_local = 100;
