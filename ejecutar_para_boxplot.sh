@@ -34,3 +34,4 @@ echo "Procesando Bupa..."
 ./main -k 16 -d "${DIR_DATOS}bupa_set.dat" -c "${DIR_DATOS}bupa_set_const_30.dat" -n $N_EJECUCIONES -s $SEMILLA -m c > ${DIR_RESULTADOS}resultados_bupa_30.csv
 
 python3 ${DIR_RESULTADOS}boxplot.py
+python3 ${DIR_RESULTADOS}histograma.py
