@@ -37,12 +37,23 @@ Directorio 'inc/' (Ficheros de cabecera):
   - pincrem.h: Problema del portfolio (Original del framework, sin modificar).
   - operadores.h: Operadores universales (Cruce Uniforme, Cruce Segmento Fijo, Mutación, Torneo).
   - genetic.h: Algoritmo Genético Generacional (AGG) y Estacionario (AGE).
-  - memetic.h: Algoritmos Meméticos (AM-All, AM-Rand, AM-Best) e implementación de la BLS (Búsqueda Local Suave) optimizada.
+  - memetic.h: Algoritmos Meméticos (AM-All, AM-Rand, AM-Best) e implementación de la BLS (Búsqueda Local Suave).
 
 Directorio 'src/' (Ficheros de código fuente):
   - ppar.cpp: Implementación de la evaluación del fitness, desviación general, 
     infeasibility, y validación/reparación de soluciones del PAR.
   - greedy.cpp: Implementación algorítmica del K-medias Restringido Débil.
+
+Directorio 'datos_PAR_curso2526/' (Ficheros de datos proporcionados por el profesor):
+  - zoo_set.dat, bupa_set.dat, glass_set.dat: Datasets de ejemplo para el PAR.
+  - zoo_set_const_15.dat, bupa_set_const_15.dat, glass_set_const_15.dat: Restricciones al 15% para cada dataset.
+  - zoo_set_const_30.dat, bupa_set_const_30.dat, glass_set_const_30.dat: Restricciones al 30% para cada dataset.
+  - glass_set.dat: Dataset de ejemplo para el PAR.
+  - glass_set_const_15.dat: Restricciones al 15% para el dataset de Glass.
+  - glass_set_const_30.dat: Restricciones al 30% para el dataset de
+  - bupa_set.dat: Dataset de ejemplo para el PAR.
+  - bupa_set_const_15.dat: Restricciones al 15% para el dataset
+  - bupa_set_const_30.dat: Restricciones al 30% para el dataset de Bupa.
 
 
 2. INSTRUCCIONES DE COMPILACIÓN
@@ -114,4 +125,13 @@ Idem para generar los CSV individuales para boxplots:
 Generará una carpeta 'resultados_csv' con los CSV de cada ejecución para cada dataset.
 Además, ejecutará un script de Python para generar los boxplots a partir de esos CSV
 en la carpeta 'graficas_generadas'.
--------------------------------------------------------------------------------
+
+4. DETALLES TÉCNICOS DESTACADOS (PRÁCTICA 2)
+--------------------------------------------------------------------------------
+- La Búsqueda Local Suave (BLS) integrada en los meméticos ha sido optimizada para descartar "evaluaciones fantasma"
+  (cuando el nuevo clúster evaluado es idéntico al actual), garantizando que las 100.000 evaluaciones
+  se inviertan en exploraciones reales.
+- La mutación en los Algoritmos Genéticos se aplica con probabilidad 0.1 a nivel de cromosoma, mientras que en los Meméticos se aplica a nivel de gen (0.1 / N).
+- Los Meméticos se han construido hibridando la BLS con el AGG de Segmento Fijo (AGG-SF), 
+  al haber demostrado ser el cruce más prometedor en las pruebas preliminares.
+--------------------------------------------------------------------------------

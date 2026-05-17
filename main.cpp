@@ -109,6 +109,7 @@ int main(int argc, char *argv[])
     AGE<int> age_sf(CruceSegmentoFijo<int>);
 
 	// Configuracion algoritmos meméticos
+	// Se ha decidido usar el cruce de segmento fijo porque da mejores resultados en general
 	AM_All<int> am_all(CruceSegmentoFijo<int>);
     AM_Rand<int> am_rand(CruceSegmentoFijo<int>);
     AM_Best<int> am_best(CruceSegmentoFijo<int>);
