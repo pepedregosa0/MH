@@ -42,5 +42,4 @@ cmake_install.cmake
 entrada.txt
 *.csv
 *.png
-boxplot.py
 *.tex
