@@ -117,8 +117,10 @@ public:
 			
 			for (int i = 1; i < this->tam_poblacion; i++)
 			{
-				if (nuevo_fitness[i] < nuevo_fitness[mejor_idx_nueva]) mejor_idx_nueva = i;
-				if (nuevo_fitness[i] > nuevo_fitness[peor_idx_nueva]) peor_idx_nueva = i;
+				if (nuevo_fitness[i] < nuevo_fitness[mejor_idx_nueva])
+					mejor_idx_nueva = i;
+				if (nuevo_fitness[i] > nuevo_fitness[peor_idx_nueva])
+					peor_idx_nueva = i;
 			}
 			
 			// Si el mejor padre es mejor que el mejor hijo, el padre pisa al peor hijo
