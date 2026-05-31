@@ -32,12 +32,16 @@ Variantes de cada algoritmo:
 - AM-All: Memético con búsqueda local sobre toda la población
 - AM-Rand: Memético con búsqueda local sobre individuos seleccionados aleatoriamente
 - AM-Best: Memético con búsqueda local solo sobre el mejor individuo de cada generación
+6. **Enfriamiento Simulado (ES):** Metaheurística inspirada en el proceso de enfriamiento de metales, que permite aceptar soluciones peores con una probabilidad decreciente para escapar de óptimos locales.
+7. **Búsqueda Multiarranque Básica (BMB):** Estrategia que ejecuta múltiples instancias de una búsqueda local desde soluciones iniciales aleatorias, seleccionando la mejor solución encontrada.
+8. **Búsqueda Local Iterativa (ILS):** Técnica que alterna entre fases de búsqueda local y perturbación de la solución para escapar de óptimos locales.
+9. **Búsqueda Local Iterativa con Enfriamiento Simulado (ILS-ES):** Hibridación de ILS con ES, donde la fase de búsqueda local se implementa mediante un algoritmo de enfriamiento simulado para mejorar la exploración del espacio de soluciones.
 
 ## Estructura del Proyecto
 El código sigue una arquitectura fuertemente modular, separando la lógica del dominio del problema de los motores de optimización:
 
 * `src/`: Implementación de la evaluación del fitness del PAR, cálculo de *infeasibility*, reparación de soluciones (`ppar.cpp`) y desarrollo de la heurística (`greedy.cpp`).
-* `inc/`: Ficheros de cabecera con las definiciones de clases (`ppar.h`, `localsearch.h`, `randomsearch.h`, `genetic.h`, `memetic.h`, `operadores.h`).
+* `inc/`: Ficheros de cabecera con las definiciones de clases (`ppar.h`, `localsearch.h`, `randomsearch.h`, `genetic.h`, `memetic.h`, `operadores.h`, `es.h`, `bmb.h`, `ils.h`, `ils_es.h`).
 * `common/`: Framework base de interfaces abstractas y utilidades genéricas de optimización (`mh.h`, `problem.h`, `random.hpp`).
 * Directorio Raíz: Contiene el orquestador `main.cpp`, archivos de configuración y *scripts* de automatización.
 * `resultados_boxplot/`:  En este directorio se guardarán los CSV generados por el script 'ejecutar_para_boxplot.sh', tambien contiene los scripts de Python para generar los boxplots e histograma a partir de esos CSV (`boxplot.py`, `histograma.py`).
@@ -79,7 +83,8 @@ Opciones extra:
     Algoritmos disponibles:
             Random, Greedy, BL,
             AGG-UN, AGG-SF, AGE-UN, AGE-SF,
-            AM-All, AM-Rand, AM-Best
+            AM-All, AM-Rand, AM-Best,
+            ES, BMB, ILS, ILS-ES
   -n <ejecs>      Número de ejecuciones (para modo 'c', por defecto: 10)
   -k <clusters>   Número de clusters (por defecto: 7)
   -e <evals>      Número de evaluaciones (por defecto: 100000)

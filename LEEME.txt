@@ -37,6 +37,10 @@ Directorio 'inc/' (Ficheros de cabecera):
   - operadores.h: Operadores universales (Cruce Uniforme, Cruce Segmento Fijo, Mutación, Torneo).
   - genetic.h: Algoritmo Genético Generacional (AGG) y Estacionario (AGE).
   - memetic.h: Algoritmos Meméticos (AM-All, AM-Rand, AM-Best) e implementación de la BLS (Búsqueda Local Suave).
+  - es.h: Algoritmo de Enfriamiento Simulado (ES).
+  - bmb.h: Algoritmo de Búsqueda Multiarranque Básica (BMB).
+  - ils.h: Algoritmo de Búsqueda Local Iterativa (ILS)
+  - ils_es.h: Algoritmo de Búsqueda Local Iterativa con Enfriamiento Simulado (ILS-ES).
 
 Directorio 'src/' (Ficheros de código fuente):
   - ppar.cpp: Implementación de la evaluación del fitness, desviación general, 
@@ -93,7 +97,8 @@ Opciones extra:
     Algoritmos disponibles:
             Random, Greedy, BL,
             AGG-UN, AGG-SF, AGE-UN, AGE-SF,
-            AM-All, AM-Rand, AM-Best
+            AM-All, AM-Rand, AM-Best,
+            ES, BMB, ILS, ILS-ES
   -n <ejecs>      Número de ejecuciones (para modo 'c', por defecto: 10)
   -k <clusters>   Número de clusters (por defecto: 7)
   -e <evals>      Número de evaluaciones (por defecto: 100000)
@@ -130,12 +135,3 @@ Generará una carpeta 'resultados_csv' con los CSV de cada ejecución para cada 
 Además, ejecutará un script de Python para generar los boxplots a partir de esos CSV
 en la carpeta 'graficas_generadas'.
 
-4. DETALLES TÉCNICOS DESTACADOS (PRÁCTICA 2)
---------------------------------------------------------------------------------
-- La Búsqueda Local Suave (BLS) integrada en los meméticos ha sido optimizada para descartar "evaluaciones fantasma"
-  (cuando el nuevo clúster evaluado es idéntico al actual), garantizando que las 100.000 evaluaciones
-  se inviertan en exploraciones reales.
-- La mutación en los Algoritmos Genéticos se aplica con probabilidad 0.1 a nivel de cromosoma, mientras que en los Meméticos se aplica a nivel de gen (0.1 / N).
-- Los Meméticos se han construido hibridando la BLS con el AGG de Segmento Fijo (AGG-SF), 
-  al haber demostrado ser el cruce más prometedor en las pruebas preliminares.
---------------------------------------------------------------------------------

@@ -101,4 +101,55 @@ public:
 
 		return ResultMH<tDomain>(sol_actual, fitness_actual, evaluaciones);
 	}
+
+
+	// Local search a partir de una solución dada (para usar en BMB e ILS-ES)
+	ResultMH<tDomain> optimize_starting_from(Problem<tDomain> &problem, int maxevals, tSolution<tDomain> sol_inicial) 
+	{
+		assert(maxevals > 0);
+		
+		// En lugar de crearla, partimos de la que nos pasan (mutada)
+		tSolution<tDomain> sol_actual = sol_inicial;
+		tFitness fitness_actual = problem.fitness(sol_actual);
+		
+		int evaluaciones = 1; // Ya hemos evaluado la solucion inicial
+		bool hay_mejora = true;
+
+		while (evaluaciones < maxevals && hay_mejora) 
+		{
+			hay_mejora = false;
+
+			auto vecindario = GenerarVecindarioVirtual(sol_actual, problem);
+			BarajarVecindario(vecindario);
+
+			// Bucle Primero el mejor
+			for (size_t v = 0; v < vecindario.size() && evaluaciones < maxevals; v++) 
+			{
+				int indice = vecindario[v].first;
+				tDomain nuevo_valor = vecindario[v].second;
+				tDomain valor_antiguo = sol_actual[indice];
+
+				sol_actual[indice] = nuevo_valor;
+
+				if (!problem.isValid(sol_actual)) 
+				{
+					sol_actual[indice] = valor_antiguo; 
+					continue;
+				}
+
+				tFitness fitness_vecino = problem.fitness(sol_actual);
+				evaluaciones++;
+
+				if (fitness_vecino < fitness_actual) {
+					fitness_actual = fitness_vecino;
+					hay_mejora = true;
+					break; 
+				} 
+				else
+					sol_actual[indice] = valor_antiguo; 
+			}
+		}
+
+		return ResultMH<tDomain>(sol_actual, fitness_actual, evaluaciones);
+	}
 };

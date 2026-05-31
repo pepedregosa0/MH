@@ -24,6 +24,10 @@ Descripcion: Main para ejecutar los algoritmos de MH y obtener tablas de resulta
 #include "localsearch.h"
 #include "genetic.h"
 #include "memetic.h"
+#include "es.h"
+#include "bmb.h"
+#include "ils.h"
+#include "ils_es.h"
 
 using namespace std;
 template <typename S>
@@ -31,7 +35,7 @@ ostream &operator<<(ostream &os, const vector<S> &vector)
 {
   // Printing all the elements using <<
   for (auto i : vector)
-    os << i << " ";
+	os << i << " ";
   return os;
 }
 
@@ -39,21 +43,21 @@ ostream &operator<<(ostream &os, const vector<S> &vector)
 void print_use()
 {
 	cout << "Uso: ./main -d <dataset> -c <restricciones> -m <modo> [opciones]\n\n";
-    cout << "Argumentos obligatorios:\n";
-    cout << "  -d <archivo>    Ruta al archivo de datos (.dat)\n";
-    cout << "  -c <archivo>    Ruta al archivo de restricciones (_const.dat)\n";
-    cout << "  -m <modo>       Modo de ejecución: 'i' (individual), 't' (tabla), 'c' (csv)\n\n";
-    cout << "Opciones extra:\n";
-    cout << "  -s <semilla>    Semilla aleatoria (por defecto: 42)\n";
-    cout << "  -a <algoritmo>  Nombre del algoritmo (obligatorio en modo 'i')\n";
+	cout << "Argumentos obligatorios:\n";
+	cout << "  -d <archivo>	Ruta al archivo de datos (.dat)\n";
+	cout << "  -c <archivo>	Ruta al archivo de restricciones (_const.dat)\n";
+	cout << "  -m <modo>	   Modo de ejecución: 'i' (individual), 't' (tabla), 'c' (csv)\n\n";
+	cout << "Opciones extra:\n";
+	cout << "  -s <semilla>	Semilla aleatoria (por defecto: 42)\n";
+	cout << "  -a <algoritmo>  Nombre del algoritmo (obligatorio en modo 'i')\n";
 	cout << "\tAlgoritmos disponibles:\n";
 	cout << "\tRandom, Greedy, BL,\n";
 	cout << "\tAGG-UN, AGG-SF, AGE-UN, AGE-SF,\n";
 	cout << "\tAM-All, AM-Rand, AM-Best\n";
-    cout << "  -n <ejecs>      Número de ejecuciones (para modo 'c', por defecto: 10)\n";
+	cout << "  -n <ejecs>	  Número de ejecuciones (para modo 'c', por defecto: 10)\n";
 	cout << "  -k <clusters>   Número de clusters (por defecto: 7)\n";
-	cout << "  -e <evals>      Número de evaluaciones (por defecto: 100000)\n";
-	cout << "  -h              Mostrar esta ayuda\n";
+	cout << "  -e <evals>	  Número de evaluaciones (por defecto: 100000)\n";
+	cout << "  -h			  Mostrar esta ayuda\n";
 	cout << "\nEjemplo de uso:\n";
 	cout << "  ./main -d ./datos_PAR_curso2526/bupa_set.dat -c ./datos_PAR_curso2526/bupa_set_const_30.dat -m c -n 1\n";
 	cout << "  (Ejecuta los algoritmos en modo csv para generar una tabla con 1 ejecucion cada uno)\n";
@@ -74,14 +78,14 @@ int main(int argc, char *argv[])
 		switch (opt) 
 		{
 			case 'd': f_datos = optarg; break;
-            case 'c': f_const = optarg; break;
-            case 'm': modo = optarg[0]; break;
-            case 's': semilla = stoi(optarg); break;
-            case 'a': algoritmo = optarg; break;
-            case 'n': n_ejecuciones = stoi(optarg); break;
-            case 'k': n_clusters = stoi(optarg); break;
-            case 'e': num_evaluaciones = stoi(optarg); break;
-            case 'h': default: print_use(); return 1; // sin args o -h muestra ayuda
+			case 'c': f_const = optarg; break;
+			case 'm': modo = optarg[0]; break;
+			case 's': semilla = stoi(optarg); break;
+			case 'a': algoritmo = optarg; break;
+			case 'n': n_ejecuciones = stoi(optarg); break;
+			case 'k': n_clusters = stoi(optarg); break;
+			case 'e': num_evaluaciones = stoi(optarg); break;
+			case 'h': default: print_use(); return 1; // sin args o -h muestra ayuda
 		}
 	}
 
@@ -92,41 +96,50 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-    // Inicializacion del problema
-    Par::ProblemPar problema(n_clusters, f_datos, f_const);
-    Problem<int> *problem = dynamic_cast<Problem<int> *>(&problema);
+	// Inicializacion del problema
+	Par::ProblemPar problema(n_clusters, f_datos, f_const);
+	Problem<int> *problem = dynamic_cast<Problem<int> *>(&problema);
 	Random::seed(semilla);
 
-    // Configuracion de algoritmos
-    RandomSearch<int> ralg;
-    GreedySearch rgreedy;
-    LocalSearch<int> rls;
+	// Configuracion de algoritmos
+	RandomSearch<int> ralg;
+	GreedySearch rgreedy;
+	LocalSearch<int> rls;
 
 	// Configuracion algoritmos genéticos
-    AGG<int> agg_un(CruceUniforme<int>);
-    AGG<int> agg_sf(CruceSegmentoFijo<int>);
-    AGE<int> age_un(CruceUniforme<int>);
-    AGE<int> age_sf(CruceSegmentoFijo<int>);
+	AGG<int> agg_un(CruceUniforme<int>);
+	AGG<int> agg_sf(CruceSegmentoFijo<int>);
+	AGE<int> age_un(CruceUniforme<int>);
+	AGE<int> age_sf(CruceSegmentoFijo<int>);
 
 	// Configuracion algoritmos meméticos
 	// Se ha decidido usar el cruce de segmento fijo porque da mejores resultados en general
 	AM_All<int> am_all(CruceSegmentoFijo<int>);
-    AM_Rand<int> am_rand(CruceSegmentoFijo<int>);
-    AM_Best<int> am_best(CruceSegmentoFijo<int>);
+	AM_Rand<int> am_rand(CruceSegmentoFijo<int>);
+	AM_Best<int> am_best(CruceSegmentoFijo<int>);
 
+	// Configuracion Practica 3
+	EnfriamientoSimulado<int> es;
+	BMB<int> bmb;
+	ILS<int> ils;
+	ILS_ES<int> ils_es;
 
-    map<string, MH<int>*> algoritmos = {
-        make_pair("Random", &ralg),
-        make_pair("Greedy", &rgreedy),
-        make_pair("BL", &rls),
+	map<string, MH<int>*> algoritmos = {
+		make_pair("Random", &ralg),
+		make_pair("Greedy", &rgreedy),
+		make_pair("BL", &rls),
 		make_pair("AGG-UN", &agg_un),
 		make_pair("AGG-SF", &agg_sf),
 		make_pair("AGE-UN", &age_un),
 		make_pair("AGE-SF", &age_sf),
 		make_pair("AM-All", &am_all),
-        make_pair("AM-Rand", &am_rand),
-        make_pair("AM-Best", &am_best)
-    };
+		make_pair("AM-Rand", &am_rand),
+		make_pair("AM-Best", &am_best),
+		make_pair("ES", &es),
+		make_pair("BMB", &bmb),
+		make_pair("ILS", &ils),
+		make_pair("ILS-ES", &ils_es)
+	};
 
 	if (modo == 'i') // Modo individual
 	{
@@ -136,7 +149,8 @@ int main(int argc, char *argv[])
 			cout << "Algoritmos disponibles:\n";
 			cout << "\tRandom, Greedy, BL,\n";
 			cout << "\tAGG-UN, AGG-SF, AGE-UN, AGE-SF,\n";
-			cout << "\tAM-All, AM-Rand, AM-Best\n";
+			cout << "\tAM-All, AM-Rand, AM-Best,\n";
+			cout << "\tES, BMB, ILS, ILS-ES\n";
 			return 1;
 		}
 		cout << "Ejecutando " << algoritmo << "...\n";
@@ -174,19 +188,19 @@ int main(int argc, char *argv[])
 	else if (modo == 't') // Modo tabla LaTeX
 	{
 		// Cabecera del entorno LaTeX
-        cout << "\\begin{table}[htpb]" << "\n";
-        cout << "\\centering" << "\n";
-        
-        // Personalizacion del caption con los nombres de los archivos usados
-        cout << "\\caption{Resultados obtenidos para el dataset " << f_datos 
-             << " con archivo " << f_const << "}" << "\n";
-             
-        cout << "\\begin{tabular}{lccccc}" << "\n";
-        cout << "\\hline" << "\n";
-        cout << "Algoritmo & Fitness & Distancia & Incumplimiento & Evaluaciones & Tiempo (seg) \\\\" << "\n";
-        cout << "\\hline" << "\n";
+		cout << "\\begin{table}[htpb]" << "\n";
+		cout << "\\centering" << "\n";
+		
+		// Personalizacion del caption con los nombres de los archivos usados
+		cout << "\\caption{Resultados obtenidos para el dataset " << f_datos 
+			 << " con archivo " << f_const << "}" << "\n";
+			 
+		cout << "\\begin{tabular}{lccccc}" << "\n";
+		cout << "\\hline" << "\n";
+		cout << "Algoritmo & Fitness & Distancia & Incumplimiento & Evaluaciones & Tiempo (seg) \\\\" << "\n";
+		cout << "\\hline" << "\n";
 
-        for (auto const& [nombre, mh] : algoritmos) 
+		for (auto const& [nombre, mh] : algoritmos) 
 		{
 			// Variables para acumular y hacer la media
 			double media_fitness = 0.0;
@@ -224,21 +238,21 @@ int main(int argc, char *argv[])
 			media_incumplimientos /= problema.NumeroRestricciones();
 
 			// Printf porque resulta mas facil para formatear la tabla con alineacion decimal
-            printf("%s & %.3f & %.3f & %.3f%% & %.0f & %.4f \\\\\n", 
-                   nombre.c_str(),
+			printf("%s & %.3f & %.3f & %.3f%% & %.0f & %.4f \\\\\n", 
+				   nombre.c_str(),
 				   media_fitness,
 				   media_distancia,
-                   media_incumplimientos,
+				   media_incumplimientos,
 				   media_evaluaciones,
 				   media_tiempo
 				);
-        }
+		}
 
-        // Cierre del entorno LaTeX
-        cout << "\\hline" << "\n";
-        cout << "\\end{tabular}" << "\n";
-        cout << "\\end{table}" << "\n";
+		// Cierre del entorno LaTeX
+		cout << "\\hline" << "\n";
+		cout << "\\end{tabular}" << "\n";
+		cout << "\\end{table}" << "\n";
 	}
 
-    return 0;
+	return 0;
 }
