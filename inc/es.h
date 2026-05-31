@@ -21,98 +21,16 @@ public:
 	EnfriamientoSimulado() : MH<tDomain>() {}
 	virtual ~EnfriamientoSimulado() {}
 
+	// Arranca desde una solución aleatoria
 	ResultMH<tDomain> optimize(Problem<tDomain> &problem, int maxevals) override
 	{
-		int n = problem.getSolutionSize();
-		
-		// Obtenemos el dominio (0 y k-1) para mutar correctamente
-		auto domain = problem.getSolutionDomainRange();
-		int min_val = domain.first;
-		int max_val = domain.second;
-		
-		int max_vecinos = 10 * n;
-		int max_exitos = 1 * n;
-		int M = maxevals / max_vecinos;
-		
-		// Solucion inicial aleatoria
-		tSolution<tDomain> S = problem.createSolution();
-		problem.fix(S);
-		
-		double coste_S = problem.fitness(S);
-		int evals = 1;
-		
-		// Guardamos el mejor histórico para devolverlo al final
-		tSolution<tDomain> mejor_historico = S;
-		double mejor_coste_historico = coste_S;
-
-		// Inicialización de Temperaturas
-		double T0 = (0.2 * coste_S) / (-log(0.3));
-		double Tf = 1e-3;
-		double T = T0;
-		
-		// Factor de enfriamiento
-		double beta = (T0 - Tf) / (M * T0 * Tf);
-
-		// Variable para controlar si la temperatura anterior tuvo éxitos
-		int exitos = 1; 
-		
-		while (evals < maxevals && exitos > 0)
-		{
-			exitos = 0;
-			int vecinos = 0;
-			
-			// L(T) a Temperatura constante
-			while (vecinos < max_vecinos && exitos < max_exitos && evals < maxevals)
-			{
-				// Generar vecino único
-				tSolution<tDomain> S_vecino = S;
-				int gen = Random::get<int>(0, n - 1);
-				int valor_actual = S_vecino[gen];
-				
-				// Le asignamos un clúster estrictamente distinto
-				int nuevo_valor = Random::get<int>(min_val, max_val);
-
-				while (nuevo_valor == valor_actual)
-					nuevo_valor = Random::get<int>(min_val, max_val);
-
-				S_vecino[gen] = nuevo_valor;
-				
-				// Reparamos la solución por si hemos dejado un clúster vacío
-				problem.fix(S_vecino);
-				
-				double coste_vecino = problem.fitness(S_vecino);
-				evals++;
-				vecinos++;
-				
-				// Diferencia de coste (f(s') - f(s))
-				double delta_f = coste_vecino - coste_S;
-				
-				// CRITERIO DE ACEPTACION
-				// Se acepta si mejora (delta_f < 0) o si se cumple la probabilidad exponencial
-				if (delta_f < 0 || Random::get(0.0, 1.0) <= exp(-delta_f / T))
-				{
-					S = S_vecino;
-					coste_S = coste_vecino;
-					exitos++;
-					
-					// Actualizar el mejor absoluto encontrado en toda la búsqueda
-					if (coste_S < mejor_coste_historico)
-					{
-						mejor_historico = S;
-						mejor_coste_historico = coste_S;
-					}
-				}
-			}
-			
-			// Enfriar la temperatura
-			T = T / (1.0 + beta * T);
-		}
-		
-		// Devolvemos la mejor solución encontrada
-		return ResultMH<tDomain>(mejor_historico, mejor_coste_historico, evals);
+		tSolution<tDomain> sol_inicial = problem.createSolution();
+		problem.fix(sol_inicial);
+		// Reutilizamos la lógica llamando a la nueva función
+		return optimize_starting_from(problem, maxevals, sol_inicial);
 	}
 
-	// Sobrecarga para ILS-ES
+	// Para el ILS-ES, arranca desde la solución mutada que le pasamos por parámetro
 	ResultMH<tDomain> optimize_starting_from(Problem<tDomain> &problem, int maxevals, tSolution<tDomain> sol_inicial)
 	{
 		int n = problem.getSolutionSize();
@@ -120,75 +38,103 @@ public:
 		tDomain min_val = domain.first;
 		tDomain max_val = domain.second;
 		
+		// Parámetros de iteración
 		int max_vecinos = 10 * n;
 		int max_exitos = 1 * n;
 		int M = maxevals / max_vecinos;
 		
-		// Partimos de la solución mutada que nos pasan por parámetro
+		// Solución Inicial
 		tSolution<tDomain> S = sol_inicial;
 		
 		double coste_S = problem.fitness(S);
-		int evals = 1;
+		int evals = 1; // Evaluamos la inicial
 		
+		// Guardamos el mejor histórico
 		tSolution<tDomain> mejor_historico = S;
 		double mejor_coste_historico = coste_S;
 
 		// Inicialización de Temperaturas
-		double T0 = (0.2 * coste_S) / (-log(0.3));
-		double Tf = 0.001;
+		double T0 = (0.2 * coste_S) / (-std::log(0.3));
+		double Tf = 1e-3;
 		double T = T0;
+		
+		// Factor de enfriamiento
 		double beta = (T0 - Tf) / (M * T0 * Tf);
+
 		int exitos = 1; 
 		
-		while (evals < maxevals && exitos > 0)
+		// Preparamos un vector de índices para generar vecinos sin repetición (Fisher-Yatesx)
+		std::vector<int> indices(n);
+		for(int i = 0; i < n; i++) indices[i] = i;
+		
+		while (evals < maxevals && exitos > 0) 
 		{
 			exitos = 0;
 			int vecinos = 0;
 			
-			while (vecinos < max_vecinos && exitos < max_exitos && evals < maxevals)
+			// Forzamos que se baraje al entrar al bucle de temperatura
+			int idx_gen = n; 
+			
+			// L(T) a Temperatura constante
+			while (vecinos < max_vecinos && exitos < max_exitos && evals < maxevals) 
 			{
-				// Generar vecino único
+				
+				// Si hemos consumido todos los índices, volvemos a barajar (Fisher-Yates)
+				if (idx_gen == n)
+				{
+					for (int j = n - 1; j > 0; j--)
+					{
+						int k = Random::get<int>(0, j);
+						std::swap(indices[j], indices[k]);
+					}
+					idx_gen = 0; // Reiniciamos el contador
+				}
+				
+				// Obtenemos el gen a mutar siguiendo el orden barajado (sin repetición)
+				int gen = indices[idx_gen];
+				idx_gen++;
+				
+				// Generamos un solo vecino modificando el gen seleccionado
 				tSolution<tDomain> S_vecino = S;
-				int gen = Random::get<int>(0, n - 1);
 				tDomain valor_actual = S_vecino[gen];
 				
-				// Le asignamos un clúster estrictamente distinto
+				// Le asignamos un clúster distinto
 				tDomain nuevo_valor = Random::get<tDomain>(min_val, max_val);
-
 				while (nuevo_valor == valor_actual)
 					nuevo_valor = Random::get<tDomain>(min_val, max_val);
 
 				S_vecino[gen] = nuevo_valor;
 				
-				// Reparamos la solución por si hemos dejado un clúster vacío
+				// Reparamos para mantener factibilidad
 				problem.fix(S_vecino);
 				
 				double coste_vecino = problem.fitness(S_vecino);
 				evals++;
 				vecinos++;
 				
-				// Diferencia de coste (f(s') - f(s))
+				// Diferencia de coste para minimizar
 				double delta_f = coste_vecino - coste_S;
+				double prob_accept = std::exp(-delta_f / T);
 				
 				// CRITERIO DE ACEPTACION
-				// Se acepta si mejora (delta_f < 0) o si se cumple la probabilidad exponencial
-				if (delta_f < 0 || Random::get<double>(0.0, 1.0) <= exp(-delta_f / T))
+				if (delta_f < 0 || Random::get<double>(0.0, 1.0) <= prob_accept)
 				{
 					S = S_vecino;
 					coste_S = coste_vecino;
 					exitos++;
 					
-					// Actualizar el mejor absoluto encontrado en toda la búsqueda
-					if (coste_S < mejor_coste_historico)
-					{
+					if (coste_S < mejor_coste_historico) {
 						mejor_historico = S;
 						mejor_coste_historico = coste_S;
 					}
 				}
 			}
-			// Enfriar la temperatura
+			
+			// Enfriamiar temperatura
 			T = T / (1.0 + beta * T);
 		}
+		
 		return ResultMH<tDomain>(mejor_historico, mejor_coste_historico, evals);
 	}
+
 };
