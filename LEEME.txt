@@ -19,7 +19,6 @@ Directorio Raíz:
   - ejecutar_para_boxplot.sh: Script de Bash para ejecutar los datasets y 
     exportar los resultados individuales en formato CSV para generar boxplots.
   - clean.sh: Script auxiliar para limpiar los ficheros de compilación.
-  - generar_boxplots.py: Script de Python para generar los boxplots a partir de los CSV.
 
 Directorio 'common/' (Framework base del profesor - SIN MODIFICAR):
   - mh.h / mhtrayectory.h: Interfaces base para las metaheurísticas.
@@ -50,11 +49,16 @@ Directorio 'datos_PAR_curso2526/' (Ficheros de datos proporcionados por el profe
   - zoo_set_const_30.dat, bupa_set_const_30.dat, glass_set_const_30.dat: Restricciones al 30% para cada dataset.
   - glass_set.dat: Dataset de ejemplo para el PAR.
   - glass_set_const_15.dat: Restricciones al 15% para el dataset de Glass.
-  - glass_set_const_30.dat: Restricciones al 30% para el dataset de
+  - glass_set_const_30.dat: Restricciones al 30% para el dataset de Glass.
   - bupa_set.dat: Dataset de ejemplo para el PAR.
   - bupa_set_const_15.dat: Restricciones al 15% para el dataset
   - bupa_set_const_30.dat: Restricciones al 30% para el dataset de Bupa.
 
+Directorio 'resultados_boxplot/':
+  En este directorio se guardarán los CSV generados por el script 'ejecutar_para_boxplot.sh',
+  y se ejecutarán los scripts de Python de esta carpeta para generar los boxplots e histograma a partir de esos CSV.
+  - boxplot.py: Script de Python para generar los boxplots a partir de los CSV generados.
+  - histograma.py: Script de Python para generar histograma de AGGs a partir de los CSV generados.
 
 2. INSTRUCCIONES DE COMPILACIÓN
 -------------------------------------------------------------------------------

@@ -40,6 +40,7 @@ El código sigue una arquitectura fuertemente modular, separando la lógica del 
 * `inc/`: Ficheros de cabecera con las definiciones de clases (`ppar.h`, `localsearch.h`, `randomsearch.h`, `genetic.h`, `memetic.h`, `operadores.h`).
 * `common/`: Framework base de interfaces abstractas y utilidades genéricas de optimización (`mh.h`, `problem.h`, `random.hpp`).
 * Directorio Raíz: Contiene el orquestador `main.cpp`, archivos de configuración y *scripts* de automatización.
+* `resultados_boxplot/`:  En este directorio se guardarán los CSV generados por el script 'ejecutar_para_boxplot.sh', tambien contiene los scripts de Python para generar los boxplots e histograma a partir de esos CSV (`boxplot.py`, `histograma.py`).
 
 ## Compilación e Instalación
 El proyecto utiliza **CMake** para garantizar una compilación sencilla y sin errores en entornos Linux/Unix.
