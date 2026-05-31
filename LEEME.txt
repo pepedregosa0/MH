@@ -62,7 +62,7 @@ Directorio 'resultados_boxplot/':
   En este directorio se guardarán los CSV generados por el script 'ejecutar_para_boxplot.sh',
   y se ejecutarán los scripts de Python de esta carpeta para generar los boxplots e histograma a partir de esos CSV.
   - boxplot.py: Script de Python para generar los boxplots a partir de los CSV generados.
-  - histograma.py: Script de Python para generar histograma de AGGs a partir de los CSV generados.
+  - histograma.py: Script de Python para generar histograma de los algoritmos a partir de los CSV generados.
 
 2. INSTRUCCIONES DE COMPILACIÓN
 -------------------------------------------------------------------------------

@@ -19,7 +19,7 @@ def main():
         df['alg'] = df['alg'].str.upper()
         
         # Filtramos para quedarnos solo con los dos AGG que te interesan
-        df_filtrado = df[df['alg'].isin(['AGG-UN', 'AGG-SF', 'AGE-UN', 'AGE-SF', 'AM-ALL', 'AM-RAND', 'AM-BEST', 'BL', 'GREEDY', 'RANDOM'])]
+        df_filtrado = df[df['alg'].isin(['BL', 'GREEDY', 'AGG-SF', 'ES', 'BMB', 'ILS', 'ILS-ES'])]
         
         if df_filtrado.empty:
             continue
@@ -36,7 +36,7 @@ def main():
         datos_agrupados.append(df_medias)
         
     if not datos_agrupados:
-        print("No se encontraron datos de AGG-UN o AGG-SF en los CSVs.")
+        print("No se encontraron datos de los algoritmos en los CSVs.")
         return
 
     # Unimos todos los dataframes pequeños en uno solo grande
@@ -63,7 +63,7 @@ def main():
     # Añadimos títulos y etiquetas
     grafica.set_xlabel("Escenario (Dataset_Restricciones)", fontsize=12, labelpad=10)
     grafica.set_ylabel("Fitness Medio (Menor es mejor)", fontsize=12)
-    grafica.set_title("Comparativa de Fitness Medio: AGG-UN vs AGG-SF", fontsize=16, pad=15)
+    grafica.set_title("Comparativa de Fitness Medio", fontsize=16, pad=15)
     
     # El truco para poner los valores encima de cada barra
     for contenedor in grafica.containers:
@@ -82,8 +82,8 @@ def main():
     plt.tight_layout()
     
     # Guardamos la imagen final
-    plt.savefig("comparativa_AGGs.png", dpi=300)
-    print("Gráfica guardada exitosamente como 'comparativa_AGGs.png'")
+    plt.savefig("comparativa.png", dpi=300)
+    print("Gráfica guardada exitosamente como 'comparativa.png'")
     
     # Cerramos
     plt.close()
