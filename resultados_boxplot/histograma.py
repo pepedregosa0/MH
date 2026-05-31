@@ -19,7 +19,7 @@ def main():
         df['alg'] = df['alg'].str.upper()
         
         # Filtramos para quedarnos solo con los dos AGG que te interesan
-        df_filtrado = df[df['alg'].isin(['AGG-UN', 'AGG-SF'])]
+        df_filtrado = df[df['alg'].isin(['AGG-UN', 'AGG-SF', 'AGE-UN', 'AGE-SF', 'AM-ALL', 'AM-RAND', 'AM-BEST', 'BL', 'GREEDY', 'RANDOM'])]
         
         if df_filtrado.empty:
             continue

@@ -55,8 +55,8 @@ void print_use()
 	cout << "  -e <evals>      Número de evaluaciones (por defecto: 100000)\n";
 	cout << "  -h              Mostrar esta ayuda\n";
 	cout << "\nEjemplo de uso:\n";
-	cout << "  ./main -d zoo_set.dat -c zoo_set_const_30.dat -m c -n 20\n";
-	cout << "  (Ejecuta los algoritmos en modo csv para generar una tabla con 20 ejecuciones cada uno)\n";
+	cout << "  ./main -d ./datos_PAR_curso2526/bupa_set.dat -c ./datos_PAR_curso2526/bupa_set_const_30.dat -m c -n 1\n";
+	cout << "  (Ejecuta los algoritmos en modo csv para generar una tabla con 1 ejecucion cada uno)\n";
 }
 
 int main(int argc, char *argv[]) 
