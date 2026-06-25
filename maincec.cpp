@@ -62,7 +62,7 @@ int main()
             cout << " ¡Completada!" << endl;
 
             // Guardar al archivo .txt con el formato exacto requerido por extract.py
-            string filename = "results_HBIA/HBIA_" + to_string(func) + "_" + to_string(dim) + ".txt";
+            string filename = "resultados_HBIA/HBIA_" + to_string(func) + "_" + to_string(dim) + ".txt";
             ofstream outfile(filename);
             if (outfile.is_open()) {
                 for (int i = 0; i < 14; ++i) {
