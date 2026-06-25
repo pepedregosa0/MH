@@ -33,7 +33,6 @@ Directorio 'inc/' (Ficheros de cabecera):
   - greedy.h: Cabecera del algoritmo constructivo GreedySearch.
   - localsearch.h: Cabecera y desarrollo del algoritmo de Búsqueda Local.
   - randomsearch.h: Cabecera y desarrollo de la Metaheurística Aleatoria.
-  - pincrem.h: Problema del portfolio (Original del framework, sin modificar).
   - operadores.h: Operadores universales (Cruce Uniforme, Cruce Segmento Fijo, Mutación, Torneo).
   - genetic.h: Algoritmo Genético Generacional (AGG) y Estacionario (AGE).
   - memetic.h: Algoritmos Meméticos (AM-All, AM-Rand, AM-Best) e implementación de la BLS (Búsqueda Local Suave).

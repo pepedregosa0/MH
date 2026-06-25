@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 PROJECT(mh_p1 CXX)
 
-file(GLOB C_SOURCES "src/*.cpp")
+file(GLOB C_SOURCES "src/*.cpp" "src/*.c")
 include_directories("common" "inc")
 
 add_executable(main "main.cpp" ${C_SOURCES})
