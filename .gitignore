@@ -32,6 +32,7 @@
 *.app
 
 main
+maincec
 CMakeCache.txt
 CMakeFiles/
 Makefile
@@ -43,3 +44,5 @@ entrada.txt
 *.csv
 *.png
 *.tex
+
+resultados_HBIA/*.txt

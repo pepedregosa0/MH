@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 3.10)
 
-PROJECT(mh_p1 CXX)
+PROJECT(Metaheuristicas)
 
 file(GLOB C_SOURCES "src/*.cpp" "src/*.c")
 include_directories("common" "inc")
 
+# Quitamos explícitamente los mains del GLOB para evitar duplicidades
+list(REMOVE_ITEM C_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/maincec.cpp")
+
 add_executable(main "main.cpp" ${C_SOURCES})
+add_executable(maincec "maincec.cpp" ${C_SOURCES})
 
 
 # Enable optimization flags

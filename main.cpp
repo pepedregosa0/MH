@@ -28,6 +28,9 @@ Descripcion: Main para ejecutar los algoritmos de MH y obtener tablas de resulta
 #include "bmb.h"
 #include "ils.h"
 #include "ils_es.h"
+#include "hbia_discrete.h"
+#include "memetic_hbia_discrete.h"
+#include "hbia_discrete_ext.h"
 
 using namespace std;
 template <typename S>
@@ -54,6 +57,7 @@ void print_use()
 	cout << "\tRandom, Greedy, BL,\n";
 	cout << "\tAGG-UN, AGG-SF, AGE-UN, AGE-SF,\n";
 	cout << "\tAM-All, AM-Rand, AM-Best\n";
+    cout << "\tHBIA, MHBIA, HBIAEXT\n";
 	cout << "  -n <ejecs>	  Número de ejecuciones (para modo 'c', por defecto: 10)\n";
 	cout << "  -k <clusters>   Número de clusters (por defecto: 7)\n";
 	cout << "  -e <evals>	  Número de evaluaciones (por defecto: 100000)\n";
@@ -124,6 +128,11 @@ int main(int argc, char *argv[])
 	ILS<int> ils;
 	ILS_ES<int> ils_es;
 
+    // Configuracion algoritmo Practica 4
+    HBIADiscrete hbiad;
+    MemeticHBIADiscrete mhbiad;
+    HBIADiscreteExtended hbiadext;
+
 	map<string, MH<int>*> algoritmos = {
 		make_pair("Random", &ralg),
 		make_pair("Greedy", &rgreedy),
@@ -138,7 +147,10 @@ int main(int argc, char *argv[])
 		make_pair("ES", &es),
 		make_pair("BMB", &bmb),
 		make_pair("ILS", &ils),
-		make_pair("ILS-ES", &ils_es)
+		make_pair("ILS-ES", &ils_es),
+        make_pair("HBIA", &hbiad),
+        make_pair("MHBIA", &mhbiad),
+        make_pair("HBIAEXT", &hbiadext)
 	};
 
 	if (modo == 'i') // Modo individual
@@ -151,6 +163,7 @@ int main(int argc, char *argv[])
 			cout << "\tAGG-UN, AGG-SF, AGE-UN, AGE-SF,\n";
 			cout << "\tAM-All, AM-Rand, AM-Best,\n";
 			cout << "\tES, BMB, ILS, ILS-ES\n";
+            
 			return 1;
 		}
 		cout << "Ejecutando " << algoritmo << "...\n";
