@@ -45,4 +45,4 @@ entrada.txt
 *.png
 *.tex
 
-resultados_HBIA/*.txt
+results_*
