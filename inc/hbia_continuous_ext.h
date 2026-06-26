@@ -118,6 +118,8 @@ public:
 		}
 
 		int estancamiento = 0;
+		int estancamiento_bl = 0;
+		int estancamiento_reinicio = 0;
 		int theta_estancamiento = std::max(5, (int)(std::log(n) + 1)); 
 
 		// BUCLE PRINCIPAL
@@ -176,12 +178,18 @@ public:
 			}
 
 			if (!improved_in_iteration)
-				estancamiento++;
+			{
+				estancamiento_bl++;
+				estancamiento_reinicio++;
+			}
 			else
-				estancamiento = 0;
+			{
+				estancamiento_bl = 0;
+				estancamiento_reinicio = 0;
+			}
 
-			// FASE 3: MEMÉTICA Y REINICIO CHC
-			if (estancamiento >= theta_estancamiento)
+			// Detonante de BL
+			if (estancamiento_bl >= theta_estancamiento)
 			{
 				// BL al Líder
 				double old_best_fit = best_bird.fitness;
@@ -189,47 +197,24 @@ public:
 				
 				if (best_bird.fitness < old_best_fit)
 				{
-					estancamiento = 0;
-					banda[0] = best_bird; // Actualizar la bandada con el súper líder
+					banda[0] = best_bird; // Actualizar la bandada con el líder
 				}
+				
+				estancamiento_bl = 0;
+			}
 
-				// Reinicio Catastrófico
-				if (estancamiento >= theta_estancamiento * 2)
+			// Reorganización o Reinicio catastrofico
+			if (estancamiento_reinicio >= theta_estancamiento * 2)
+			{
+				for (int i = 0; i < k_birds && evals < maxevals; ++i)
 				{
-					for (int i = 0; i < k_birds && evals < maxevals; ++i)
-					{
-						if (banda[i].fitness > best_bird.fitness)
-						{
-							banda[i].sol = problem.createSolution();
-							problem.fix(banda[i].sol);
-							banda[i].fitness = problem.fitness(banda[i].sol);
-							banda[i].aggressiveness = 1.0;
-							evals++;
-							if (banda[i].fitness < best_bird.fitness) best_bird = banda[i];
-
-							while (next_milestone_idx < milestones.size() && evals >= milestones[next_milestone_idx] * maxevals)
-							{
-								error_history.push_back(cec17_error(best_bird.fitness));
-								next_milestone_idx++;
-							}
-						}
-					}
-					estancamiento = 0;
-				} 
-				// Reorganización del HBIA
-				else
-				{
-					std::sort(banda.begin(), banda.end());
-
-					int num_to_kill = std::max(1, (int)(k_birds * 0.20));
-					for (int i = k_birds - num_to_kill; i < k_birds && evals < maxevals; ++i)
+					if (banda[i].fitness > best_bird.fitness)
 					{
 						banda[i].sol = problem.createSolution();
 						problem.fix(banda[i].sol);
 						banda[i].fitness = problem.fitness(banda[i].sol);
 						banda[i].aggressiveness = 1.0;
 						evals++;
-						
 						if (banda[i].fitness < best_bird.fitness)
 							best_bird = banda[i];
 
@@ -238,6 +223,32 @@ public:
 							error_history.push_back(cec17_error(best_bird.fitness));
 							next_milestone_idx++;
 						}
+					}
+				}
+				estancamiento_reinicio = 0;
+				estancamiento_bl = 0;
+			} 
+			else if (estancamiento_reinicio >= theta_estancamiento)
+			{
+				// Reorganización parcial del HBIA (Solo si está estancado a nivel intermedio)
+				std::sort(banda.begin(), banda.end());
+
+				int num_to_kill = std::max(1, (int)(k_birds * 0.20));
+				for (int i = k_birds - num_to_kill; i < k_birds && evals < maxevals; ++i)
+				{
+					banda[i].sol = problem.createSolution();
+					problem.fix(banda[i].sol);
+					banda[i].fitness = problem.fitness(banda[i].sol);
+					banda[i].aggressiveness = 1.0;
+					evals++;
+					
+					if (banda[i].fitness < best_bird.fitness)
+						best_bird = banda[i];
+
+					while (next_milestone_idx < milestones.size() && evals >= milestones[next_milestone_idx] * maxevals)
+					{
+						error_history.push_back(cec17_error(best_bird.fitness));
+						next_milestone_idx++;
 					}
 				}
 			}
