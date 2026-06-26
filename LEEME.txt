@@ -1,23 +1,28 @@
 ===============================================================================
-PRÁCTICA 2: TÉCNICAS DE BÚSQUEDA DE POBLACIONES PARA EL PAR
+PRÁCTICA 4: Metaheurísticas PARA EL PAR Y CEC 2017
 ===============================================================================
 Autor: José Pedregosa García
 Asignatura: Metaheurísticas (Curso 2025-26)
 ===============================================================================
+Nota: El acrónimo HBIA hace referencia al algoritmo moderno "Hitchcock Birds Inspired Algorithm" 
+(Algoritmo Inspirado en Los pájaros de Hitchcock), 
+implementado tanto en sus variantes discretas como continuas y mejoras.
+===============================================================================
 
 1. DESCRIPCIÓN DE LA ESTRUCTURA DE DIRECTORIOS Y FICHEROS
 -------------------------------------------------------------------------------
-El proyecto sigue una estructura modular para separar el framework base de las 
-implementaciones específicas del problema PAR:
+El proyecto sigue una estructura modular y multiejecutable para dar soporte tanto
+al problema PAR (Agrupamiento con Restricciones) como al benchmark CEC 2017:
 
 Directorio Raíz:
-  - main.cpp: Fichero principal para la ejecución de los algoritmos, 
-    parsea los argumentos por consola y formatea la salida (CSV o LaTeX).
-  - CMakeLists.txt: Archivo de configuración para generar el Makefile.
-  - ejecucion_tablas.sh: Script de Bash para ejecutar automáticamente los 6 
-    datasets y generar el código LaTeX de las tablas.
-  - ejecutar_para_boxplot.sh: Script de Bash para ejecutar los datasets y 
-    exportar los resultados individuales en formato CSV para generar boxplots.
+  - main.cpp: Fichero principal para la ejecución de los algoritmos del PAR.
+  - maincec.cpp: Fichero principal para la ejecución del benchmark CEC 2017.
+  - CMakeLists.txt: Archivo de configuración para generar el Makefile de ambos ejecutables.
+  - ejecucion_tablas.sh: Script para automatizar las tablas LaTeX del PAR.
+  - ejecutar_para_boxplot.sh: Script para exportar resultados CSV del PAR.
+  - ejecutar_cec.sh: Script de automatización para CEC 2017 (compila, gestiona 
+    el venv de Python, lanza ejecuciones en paralelo y extrae datos).
+  - extract.py y requirements.txt: Scripts y dependencias de apoyo para procesar el CEC.
   - clean.sh: Script auxiliar para limpiar los ficheros de compilación.
 
 Directorio 'common/' (Framework base del profesor - SIN MODIFICAR):
@@ -25,59 +30,54 @@ Directorio 'common/' (Framework base del profesor - SIN MODIFICAR):
   - problem.h: Interfaz abstracta genérica para los problemas.
   - solution.h: Definición de la estructura de las soluciones.
   - random.hpp: Generador de números pseudoaleatorios proporcionado.
-  - util.h: Función para printear vectores.
+  - util.h: Función auxiliar para printear vectores.
 
 Directorio 'inc/' (Ficheros de cabecera):
-  - ppar.h: Definición de la clase ProblemPar (hereda de Problem<int>) que 
-    modela el Problema de Agrupamiento con Restricciones.
+  [Comunes y PAR]
+  - ppar.h: Definición de la clase ProblemPar (Problema de Agrupamiento).
   - greedy.h: Cabecera del algoritmo constructivo GreedySearch.
-  - localsearch.h: Cabecera y desarrollo del algoritmo de Búsqueda Local.
+  - localsearch.h: Cabecera y desarrollo de la Búsqueda Local.
   - randomsearch.h: Cabecera y desarrollo de la Metaheurística Aleatoria.
-  - operadores.h: Operadores universales (Cruce Uniforme, Cruce Segmento Fijo, Mutación, Torneo).
-  - genetic.h: Algoritmo Genético Generacional (AGG) y Estacionario (AGE).
-  - memetic.h: Algoritmos Meméticos (AM-All, AM-Rand, AM-Best) e implementación de la BLS (Búsqueda Local Suave).
-  - es.h: Algoritmo de Enfriamiento Simulado (ES).
-  - bmb.h: Algoritmo de Búsqueda Multiarranque Básica (BMB).
-  - ils.h: Algoritmo de Búsqueda Local Iterativa (ILS)
-  - ils_es.h: Algoritmo de Búsqueda Local Iterativa con Enfriamiento Simulado (ILS-ES).
+  - operadores.h: Operadores universales (Cruce Uniforme, Segmento Fijo, Mutación, Torneo).
+  - genetic.h: Algoritmos Genéticos Generacionales (AGG) y Estacionarios (AGE).
+  - memetic.h: Algoritmos Meméticos (AM-All, AM-Rand, AM-Best).
+  - es.h, bmb.h, ils.h, ils_es.h: Algoritmos clásicos de trayectoria (P1/P2).
+  - hbia_discrete.h / hbia_discrete_ext.h: Implementaciones del algoritmo HBIA propio adaptado a espacio discreto (PAR).
+  - memetic_hbia_discrete.h: Algoritmo Memético basado en la versión de HBIA discreto (PAR).
+  
+  [Integración e Ingeniería del CEC 2017]
+  - hbia_continuous.h: Algoritmo HBIA para optimización continua.
+  - hbia_continuous_ext.h: Versión extendida de HBIA continuo.
+  - memetic_hbia_continuous.h: Algoritmo Memético basado en HBIA continuo.
+  - pcec2017.h: adaptación al framework de las funciones del CEC.
+  - cec17.h: Cabecera de integración del benchmark oficial.
 
 Directorio 'src/' (Ficheros de código fuente):
-  - ppar.cpp: Implementación de la evaluación del fitness, desviación general, 
-    infeasibility, y validación/reparación de soluciones del PAR.
-  - greedy.cpp: Implementación algorítmica del K-medias Restringido Débil.
+  - ppar.cpp: Implementación de la evaluación, fitness e infracciones del PAR.
+  - greedy.cpp: Implementación del K-medias Restringido Débil.
+  - cec17.c / cec17_test_func.c: Código oficial del benchmark CEC 2017 (Repositorio del profesor).
 
-Directorio 'datos_PAR_curso2526/' (Ficheros de datos proporcionados por el profesor):
-  - zoo_set.dat, bupa_set.dat, glass_set.dat: Datasets de ejemplo para el PAR.
-  - zoo_set_const_15.dat, bupa_set_const_15.dat, glass_set_const_15.dat: Restricciones al 15% para cada dataset.
-  - zoo_set_const_30.dat, bupa_set_const_30.dat, glass_set_const_30.dat: Restricciones al 30% para cada dataset.
-  - glass_set.dat: Dataset de ejemplo para el PAR.
-  - glass_set_const_15.dat: Restricciones al 15% para el dataset de Glass.
-  - glass_set_const_30.dat: Restricciones al 30% para el dataset de Glass.
-  - bupa_set.dat: Dataset de ejemplo para el PAR.
-  - bupa_set_const_15.dat: Restricciones al 15% para el dataset
-  - bupa_set_const_30.dat: Restricciones al 30% para el dataset de Bupa.
+Directorio 'datos_PAR_curso2526/' y 'input_data/':
+  - Ficheros de datos y restricciones para el PAR y configuraciones de soporte del CEC.
 
-Directorio 'resultados_boxplot/':
-  En este directorio se guardarán los CSV generados por el script 'ejecutar_para_boxplot.sh',
-  y se ejecutarán los scripts de Python de esta carpeta para generar los boxplots e histograma a partir de esos CSV.
-  - boxplot.py: Script de Python para generar los boxplots a partir de los CSV generados.
-  - histograma.py: Script de Python para generar histograma de los algoritmos a partir de los CSV generados.
+Directorios de salida:
+  - resultados_boxplot/: CSVs y gráficas generadas para el PAR.
+  - resultados_latex/: Tablas `.tex` automáticas del PAR.
+  - results_HBIA / results_MHBIA / results_HBIAExt: Historiales de ejecución del CEC.
+
 
 2. INSTRUCCIONES DE COMPILACIÓN
 -------------------------------------------------------------------------------
-El proyecto utiliza CMake para facilitar la compilación multiplataforma. Para 
-compilar el ejecutable, sitúese en el directorio raíz del proyecto y ejecute 
-los siguientes comandos en la terminal:
+El proyecto utiliza CMake. Al compilar desde la raíz del proyecto se generarán 
+de forma simultánea **dos ejecutables principales**: `main` y `maincec`.
 
   1. cmake .
   2. make
 
-Esto generará el ejecutable llamado 'main' en el directorio raíz.
-Compila correctamente en sistemas Debian en Arch no se me instalaba cmake.
-
-
 3. MANUAL DE USUARIO Y EJEMPLOS DE EJECUCIÓN
 -------------------------------------------------------------------------------
+
+A) PROBLEMA PAR (Ejecutable: ./main)
 El programa se ha diseñado para que reciba todos los parámetros mediante 
 argumentos por consola, cumpliendo así el requisito de no requerir 
 recompilación entre distintas pruebas.
@@ -97,13 +97,14 @@ Opciones extra:
             Random, Greedy, BL,
             AGG-UN, AGG-SF, AGE-UN, AGE-SF,
             AM-All, AM-Rand, AM-Best,
-            ES, BMB, ILS, ILS-ES
+            ES, BMB, ILS, ILS-ES,
+            HBIA, MHBIA, HBIAExt
   -n <ejecs>      Número de ejecuciones (para modo 'c', por defecto: 10)
   -k <clusters>   Número de clusters (por defecto: 7)
   -e <evals>      Número de evaluaciones (por defecto: 100000)
   -h              Mostrar esta ayuda
 
-[Ejemplo de Ejecución Manual]
+Ejemplo de Ejecución Manual
 Para ejecutar el dataset de Zoo con 15% de restricciones, k=7, realizando 
 10 ejecuciones independientes con semilla base 42 y salida en tabla LaTeX:
 
@@ -113,7 +114,26 @@ Para ejecutar el dataset de Bupa con 30% de restricciones, k=16, una única ejec
 
   ./main -d ./datos_PAR_curso2526/bupa_set.dat -c ./datos_PAR_curso2526/bupa_set_const_30.dat -k 16 -n 1 -s 42 -m i -a Greedy
 
+
+
+B) BENCHMARK CEC 2017 (Ejecutable: ./maincec)
+El nuevo ejecutable principal para el entorno continuo acepta la flag `-a` para 
+seleccionar de forma dinámica la variante del algoritmo y la flag opcional `-n` 
+para configurar las ejecuciones independientes.
+
+Sintaxis general:
+  ./maincec -a <algoritmo> [-n <ejecuciones>]
+
+Algoritmos disponibles para el entorno continuo:
+  - HBIA    : Algoritmo base continuo.
+  - MHBIA   : Variante Memética continua (HBIA + BL continua).
+  - HBIAExt : Versión Extendida / Mejorada del algoritmo continuo.
+
+Ejemplo manual CEC 2017 algoritmo HBIA memetico:
+  ./maincec -a MHBIA
+
 [Uso de Scripts Automáticos]
+A) PROBLEMA PAR
 Para mayor comodidad en la corrección, se han incluido scripts que lanzan de 
 forma secuencial y automática las 6 configuraciones de bases de datos exigidas 
 (Zoo, Glass y Bupa al 15% y 30%). 
@@ -134,3 +154,13 @@ Generará una carpeta 'resultados_csv' con los CSV de cada ejecución para cada 
 Además, ejecutará un script de Python para generar los boxplots a partir de esos CSV
 en la carpeta 'graficas_generadas'.
 
+B) BENCHMARK CEC 2017
+Para facilitar la corrección y paralelizar el proceso del CEC2017 de las tres variantes continuas, 
+se incluye el script `ejecutar_cec.sh`. Este script compila el código, crea un 
+entorno virtual de Python si no existe, instala los `requirements.txt`, lanza 
+las 3 ejecuciones en paralelo utilizando procesos en segundo plano y, al finalizar, 
+ejecuta `extract.py` para estructurar los datos:
+
+  chmod +x ejecutar_cec.sh
+  ./ejecutar_cec.sh
+===============================================================================

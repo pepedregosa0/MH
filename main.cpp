@@ -57,7 +57,7 @@ void print_use()
 	cout << "\tRandom, Greedy, BL,\n";
 	cout << "\tAGG-UN, AGG-SF, AGE-UN, AGE-SF,\n";
 	cout << "\tAM-All, AM-Rand, AM-Best\n";
-    cout << "\tHBIA, MHBIA, HBIAEXT\n";
+    cout << "\tHBIA, MHBIA, HBIAExt\n";
 	cout << "  -n <ejecs>	  Número de ejecuciones (para modo 'c', por defecto: 10)\n";
 	cout << "  -k <clusters>   Número de clusters (por defecto: 7)\n";
 	cout << "  -e <evals>	  Número de evaluaciones (por defecto: 100000)\n";
@@ -150,7 +150,7 @@ int main(int argc, char *argv[])
 		make_pair("ILS-ES", &ils_es),
         make_pair("HBIA", &hbiad),
         make_pair("MHBIA", &mhbiad),
-        make_pair("HBIAEXT", &hbiadext)
+        make_pair("HBIAExt", &hbiadext)
 	};
 
 	if (modo == 'i') // Modo individual
@@ -163,6 +163,7 @@ int main(int argc, char *argv[])
 			cout << "\tAGG-UN, AGG-SF, AGE-UN, AGE-SF,\n";
 			cout << "\tAM-All, AM-Rand, AM-Best,\n";
 			cout << "\tES, BMB, ILS, ILS-ES\n";
+            cout << "\tHBIA, MHBIA, HBIAExt\n";
             
 			return 1;
 		}

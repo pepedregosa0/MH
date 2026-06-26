@@ -10,7 +10,7 @@ def main():
         df['alg'] = df['alg'].str.upper()
         
         # aspect=2 o 2.5 hace la gráfica más ancha manteniendo la altura
-        p = sns.catplot(data=df, x="alg", y="fitness", aspect=2, kind="box")
+        p = sns.catplot(data=df, x="alg", y="fitness", aspect=1.5, kind="box")
         p.set(xlabel="Algoritmo", ylabel="Fitness")
         
         # Rotamos las etiquetas del eje X 45 grados para que se lean perfectamente
